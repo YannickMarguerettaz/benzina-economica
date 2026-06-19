@@ -19,11 +19,11 @@ export default function DistributoreCard({ distributore: d, carburante, rank }: 
       style={{
         display: 'flex',
         alignItems: 'center',
-        gap: 14,
-        padding: '14px 16px',
+        gap: 18,
+        padding: '18px 20px',
         background: isBest ? 'var(--green-bg)' : 'var(--surface)',
         border: `1px solid ${isBest ? 'var(--green-border)' : 'var(--border)'}`,
-        borderRadius: 10,
+        borderRadius: 12,
         textDecoration: 'none',
         transition: 'border-color 0.15s',
       }}
@@ -51,14 +51,14 @@ export default function DistributoreCard({ distributore: d, carburante, rank }: 
 
       {/* Info */}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
           {d.nome || d.gestore}
         </div>
-        <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        <div style={{ fontSize: 13, color: 'var(--muted)', marginTop: 3, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
           {d.indirizzo} · {d.comune}
         </div>
-        <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>
-          {d.distanzaKm.toFixed(1)} km
+        <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 3 }}>
+          {d.distanzaKm.toFixed(1)} km di distanza
         </div>
       </div>
 
@@ -68,7 +68,7 @@ export default function DistributoreCard({ distributore: d, carburante, rank }: 
           <>
             <div style={{
               fontFamily: 'DM Mono, monospace',
-              fontSize: 20,
+              fontSize: 24,
               fontWeight: 500,
               color: isBest ? 'var(--green)' : 'var(--text)',
               lineHeight: 1,
@@ -76,10 +76,10 @@ export default function DistributoreCard({ distributore: d, carburante, rank }: 
             }}>
               {prezzo.toFixed(3)}
             </div>
-            <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 3 }}>€/litro</div>
+            <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 4 }}>€/litro</div>
           </>
         ) : (
-          <div style={{ fontSize: 13, color: 'var(--muted)' }}>N/D</div>
+          <div style={{ fontSize: 14, color: 'var(--muted)' }}>N/D</div>
         )}
       </div>
 

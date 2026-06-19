@@ -103,40 +103,40 @@ export default function Home() {
 
       {/* Header */}
       <header style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)' }}>
-        <div style={{ maxWidth: 600, margin: '0 auto', padding: '0 20px', height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{ width: 28, height: 28, background: 'var(--text)', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
+        <div style={{ maxWidth: 900, margin: '0 auto', padding: '0 32px', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ width: 34, height: 34, background: 'var(--text)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
                 <path d="M3 22V8l9-6 9 6v14M9 22V12h6v10" />
               </svg>
             </div>
-            <span style={{ fontWeight: 600, fontSize: 15, letterSpacing: '-0.3px', color: 'var(--text)' }}>TrovaCarburante</span>
+            <span style={{ fontWeight: 700, fontSize: 17, letterSpacing: '-0.4px', color: 'var(--text)' }}>TrovaCarburante</span>
           </div>
-          <a href="/province" style={{ fontSize: 13, color: 'var(--muted)', textDecoration: 'none' }}>Province →</a>
+          <a href="/province" style={{ fontSize: 14, color: 'var(--muted)', textDecoration: 'none', fontWeight: 500 }}>Tutte le province →</a>
         </div>
       </header>
 
       {/* Hero */}
       {!cercato && (
-        <section style={{ background: 'var(--text)', color: 'white', padding: '48px 20px' }}>
-          <div style={{ maxWidth: 600, margin: '0 auto' }}>
-            <p style={{ fontSize: 12, letterSpacing: '2px', textTransform: 'uppercase', opacity: 0.45, marginBottom: 16 }}>
+        <section style={{ background: 'var(--text)', color: 'white', padding: '64px 32px' }}>
+          <div style={{ maxWidth: 900, margin: '0 auto' }}>
+            <p style={{ fontSize: 12, letterSpacing: '2.5px', textTransform: 'uppercase', opacity: 0.45, marginBottom: 20 }}>
               21.673 distributori · aggiornati ogni notte
             </p>
-            <h2 style={{ fontSize: 'clamp(26px, 6vw, 40px)', fontWeight: 300, lineHeight: 1.2, letterSpacing: '-1px', margin: 0 }}>
+            <h2 style={{ fontSize: 'clamp(32px, 5vw, 52px)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-1.5px', margin: 0 }}>
               Trova il carburante<br />
-              <span style={{ fontWeight: 600 }}>più economico vicino a te</span>
+              <span style={{ fontWeight: 700 }}>più economico vicino a te</span>
             </h2>
-            <p style={{ fontSize: 14, opacity: 0.55, marginTop: 16, lineHeight: 1.6 }}>
-              Prezzi reali dal Ministero delle Imprese. Niente registrazione, niente app.
+            <p style={{ fontSize: 16, opacity: 0.55, marginTop: 20, lineHeight: 1.7, maxWidth: 480 }}>
+              Prezzi reali dal Ministero delle Imprese. Niente registrazione, niente app da scaricare.
             </p>
           </div>
         </section>
       )}
 
       {/* Card cerca */}
-      <div style={{ maxWidth: 600, margin: cercato ? '24px auto 0' : '-24px auto 0', padding: '0 20px', position: 'relative', zIndex: 10 }}>
-        <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, padding: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)' }}>
+      <div style={{ maxWidth: 900, margin: cercato ? '32px auto 0' : '-28px auto 0', padding: '0 32px', position: 'relative', zIndex: 10 }}>
+        <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16, padding: 28, boxShadow: '0 4px 32px rgba(0,0,0,0.08)' }}>
 
           <FilterBar
             carburante={carburante}
@@ -252,7 +252,7 @@ export default function Home() {
 
       {/* Risultati */}
       {cercato && (
-        <div style={{ maxWidth: 600, margin: '0 auto', padding: '20px 20px 40px' }} className="animate-fadeup">
+        <div style={{ maxWidth: 900, margin: '0 auto', padding: '24px 32px 60px' }} className="animate-fadeup">
           {risultati.length === 0 && !loading ? (
             <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--muted)', fontSize: 14 }}>
               Nessun distributore trovato.<br />
@@ -330,40 +330,40 @@ export default function Home() {
 
       {/* Come funziona */}
       {!cercato && (
-        <div style={{ maxWidth: 600, margin: '40px auto 0', padding: '0 20px 60px' }}>
-          <p style={{ fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 20 }}>Come funziona</p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+        <div style={{ maxWidth: 900, margin: '56px auto 0', padding: '0 32px 80px' }}>
+          <p style={{ fontSize: 11, letterSpacing: '2.5px', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 24 }}>Come funziona</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
             {[
-              { n: '01', titolo: 'Filtra', desc: 'Scegli carburante, raggio e marca' },
-              { n: '02', titolo: 'Localizza', desc: 'GPS o cerca per indirizzo' },
-              { n: '03', titolo: 'Risparmia', desc: 'Vai al distributore più economico' },
+              { n: '01', titolo: 'Filtra', desc: 'Scegli carburante, raggio e marca del distributore' },
+              { n: '02', titolo: 'Localizza', desc: 'Usa il GPS oppure cerca per indirizzo o città' },
+              { n: '03', titolo: 'Risparmia', desc: 'Vai al distributore più economico vicino a te' },
             ].map((step) => (
-              <div key={step.n} style={{ padding: 16, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10 }}>
-                <div style={{ fontFamily: 'DM Mono, monospace', fontSize: 11, color: 'var(--muted)', marginBottom: 8 }}>{step.n}</div>
-                <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4 }}>{step.titolo}</div>
-                <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.5 }}>{step.desc}</div>
+              <div key={step.n} style={{ padding: 24, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12 }}>
+                <div style={{ fontFamily: 'DM Mono, monospace', fontSize: 12, color: 'var(--muted)', marginBottom: 12 }}>{step.n}</div>
+                <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>{step.titolo}</div>
+                <div style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.6 }}>{step.desc}</div>
               </div>
             ))}
           </div>
 
-          <div style={{ marginTop: 24, padding: 20, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10, display: 'flex', gap: 16, alignItems: 'center' }}>
-            <div style={{ flexShrink: 0, width: 38, height: 38, background: 'var(--green-bg)', border: '1px solid var(--green-border)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="2">
+          <div style={{ marginTop: 24, padding: 24, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, display: 'flex', gap: 20, alignItems: 'center' }}>
+            <div style={{ flexShrink: 0, width: 44, height: 44, background: 'var(--green-bg)', border: '1px solid var(--green-border)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="2">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
               </svg>
             </div>
             <div>
-              <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 2 }}>Dati ufficiali MISE</div>
-              <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.5 }}>
-                Prezzi dal Ministero delle Imprese e del Made in Italy. Aggiornati ogni notte.
+              <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 4 }}>Dati ufficiali del MISE</div>
+              <div style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.6 }}>
+                I prezzi provengono dal Ministero delle Imprese e del Made in Italy. Aggiornati automaticamente ogni notte alle 03:00.
               </div>
             </div>
           </div>
         </div>
       )}
 
-      <footer style={{ borderTop: '1px solid var(--border)', padding: '20px', textAlign: 'center' }}>
-        <p style={{ fontSize: 12, color: 'var(--muted)' }}>TrovaCarburante · Dati MISE · Aggiornati ogni notte</p>
+      <footer style={{ borderTop: '1px solid var(--border)', padding: '24px 32px', textAlign: 'center' }}>
+        <p style={{ fontSize: 13, color: 'var(--muted)' }}>TrovaCarburante · Dati MISE · Aggiornati ogni notte</p>
       </footer>
     </div>
   );
