@@ -7,14 +7,25 @@ import { fetchDistributori } from '@/lib/data';
 import { aggiungiDistanza, sortPerPrezzo } from '@/lib/geo';
 import { DistributoreConDistanza, Carburante } from '@/lib/types';
 
+async function geocodifica(indirizzo: string): Promise<{ lat: number; lng: number } | null> {
+  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(indirizzo + ', Italia')}&format=json&limit=1`;
+  const res = await fetch(url, { headers: { 'Accept-Language': 'it' } });
+  const dati = await res.json();
+  if (!dati.length) return null;
+  return { lat: parseFloat(dati[0].lat), lng: parseFloat(dati[0].lon) };
+}
+
 export default function Home() {
   const [risultati, setRisultati] = useState<DistributoreConDistanza[]>([]);
   const [carburante, setCarburante] = useState<Carburante>('benzina');
   const [raggio, setRaggio] = useState(5);
+  const [marca, setMarca] = useState('Tutte');
   const [loading, setLoading] = useState(false);
   const [errore, setErrore] = useState<string | null>(null);
   const [cercato, setCercato] = useState(false);
   const [aggiornato, setAggiornato] = useState<string | null>(null);
+  const [indirizzo, setIndirizzo] = useState('');
+  const [modalitaRicerca, setModalitaRicerca] = useState<'gps' | 'indirizzo'>('gps');
 
   const cerca = async (lat: number, lng: number) => {
     setLoading(true);
@@ -22,7 +33,12 @@ export default function Home() {
     try {
       const tutti = await fetchDistributori();
       const vicini = aggiungiDistanza(tutti, lat, lng, raggio);
-      const ordinati = sortPerPrezzo(vicini, carburante);
+      const filtrati = marca === 'Tutte'
+        ? vicini
+        : marca === 'Altro'
+          ? vicini.filter(d => !['Agip Eni', 'IP', 'Q8', 'Shell', 'TotalEnergies', 'Tamoil', 'Esso'].some(m => d.bandiera.toLowerCase().includes(m.toLowerCase())))
+          : vicini.filter(d => d.bandiera.toLowerCase().includes(marca.toLowerCase()));
+      const ordinati = sortPerPrezzo(filtrati, carburante);
       setRisultati(ordinati.slice(0, 20));
       setCercato(true);
       const res = await fetch('/data/distributori.json');
@@ -35,7 +51,7 @@ export default function Home() {
     }
   };
 
-  const handleGeo = () => {
+  const handleGps = () => {
     if (!navigator.geolocation) {
       setErrore('Il tuo browser non supporta la geolocalizzazione');
       return;
@@ -46,6 +62,36 @@ export default function Home() {
       { timeout: 10000, maximumAge: 60000 }
     );
   };
+
+  const handleIndirizzo = async () => {
+    if (!indirizzo.trim()) {
+      setErrore('Inserisci un indirizzo o una città');
+      return;
+    }
+    setLoading(true);
+    setErrore(null);
+    const coords = await geocodifica(indirizzo);
+    if (!coords) {
+      setErrore('Indirizzo non trovato. Prova con una città o un indirizzo più preciso.');
+      setLoading(false);
+      return;
+    }
+    await cerca(coords.lat, coords.lng);
+  };
+
+  const btnStyle = (active: boolean): React.CSSProperties => ({
+    flex: 1,
+    padding: '8px',
+    borderRadius: 6,
+    fontSize: 13,
+    fontWeight: 500,
+    cursor: 'pointer',
+    border: 'none',
+    background: active ? 'var(--text)' : 'transparent',
+    color: active ? 'white' : 'var(--muted)',
+    fontFamily: 'inherit',
+    transition: 'all 0.15s',
+  });
 
   return (
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
@@ -61,7 +107,7 @@ export default function Home() {
             </div>
             <span style={{ fontWeight: 600, fontSize: 15, letterSpacing: '-0.3px', color: 'var(--text)' }}>TrovaCarburante</span>
           </div>
-          <a href="/province" style={{ fontSize: 13, color: 'var(--muted)', textDecoration: 'none' }}>Tutte le province →</a>
+          <a href="/province" style={{ fontSize: 13, color: 'var(--muted)', textDecoration: 'none' }}>Province →</a>
         </div>
       </header>
 
@@ -69,15 +115,15 @@ export default function Home() {
       {!cercato && (
         <section style={{ background: 'var(--text)', color: 'white', padding: '48px 20px' }}>
           <div style={{ maxWidth: 600, margin: '0 auto' }}>
-            <p style={{ fontSize: 12, letterSpacing: '2px', textTransform: 'uppercase', opacity: 0.5, marginBottom: 16 }}>
+            <p style={{ fontSize: 12, letterSpacing: '2px', textTransform: 'uppercase', opacity: 0.45, marginBottom: 16 }}>
               21.673 distributori · aggiornati ogni notte
             </p>
-            <h2 style={{ fontSize: 'clamp(28px, 6vw, 42px)', fontWeight: 300, lineHeight: 1.2, letterSpacing: '-1px', marginBottom: 8 }}>
+            <h2 style={{ fontSize: 'clamp(26px, 6vw, 40px)', fontWeight: 300, lineHeight: 1.2, letterSpacing: '-1px', margin: 0 }}>
               Trova il carburante<br />
               <span style={{ fontWeight: 600 }}>più economico vicino a te</span>
             </h2>
-            <p style={{ fontSize: 15, opacity: 0.6, marginTop: 16, lineHeight: 1.6 }}>
-              Prezzi reali dal Ministero delle Imprese.<br />Niente registrazione, niente app da scaricare.
+            <p style={{ fontSize: 14, opacity: 0.55, marginTop: 16, lineHeight: 1.6 }}>
+              Prezzi reali dal Ministero delle Imprese. Niente registrazione, niente app.
             </p>
           </div>
         </section>
@@ -85,20 +131,78 @@ export default function Home() {
 
       {/* Card cerca */}
       <div style={{ maxWidth: 600, margin: cercato ? '24px auto 0' : '-24px auto 0', padding: '0 20px', position: 'relative', zIndex: 10 }}>
-        <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, padding: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
+        <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, padding: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.07)' }}>
+
           <FilterBar
             carburante={carburante}
             raggio={raggio}
+            marca={marca}
             onCarburanteChange={setCarburante}
             onRaggioChange={setRaggio}
+            onMarcaChange={setMarca}
           />
-          <div style={{ marginTop: 16 }}>
+
+          {/* Toggle GPS / Indirizzo */}
+          <div style={{ marginTop: 16, display: 'flex', gap: 2, background: '#f0efed', borderRadius: 8, padding: 3 }}>
+            <button onClick={() => setModalitaRicerca('gps')} style={btnStyle(modalitaRicerca === 'gps')}>
+              Usa la mia posizione
+            </button>
+            <button onClick={() => setModalitaRicerca('indirizzo')} style={btnStyle(modalitaRicerca === 'indirizzo')}>
+              Cerca per indirizzo
+            </button>
+          </div>
+
+          {/* Input indirizzo */}
+          {modalitaRicerca === 'indirizzo' && (
+            <div style={{ marginTop: 10, display: 'flex', gap: 8 }}>
+              <input
+                type="text"
+                placeholder="Es. Via Roma 1, Milano"
+                value={indirizzo}
+                onChange={(e) => setIndirizzo(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleIndirizzo()}
+                style={{
+                  flex: 1,
+                  padding: '10px 14px',
+                  border: '1px solid var(--border)',
+                  borderRadius: 8,
+                  fontSize: 14,
+                  fontFamily: 'inherit',
+                  background: 'white',
+                  color: 'var(--text)',
+                  outline: 'none',
+                }}
+              />
+              <button
+                onClick={handleIndirizzo}
+                disabled={loading}
+                style={{
+                  padding: '10px 16px',
+                  background: 'var(--text)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: 8,
+                  fontSize: 13,
+                  fontWeight: 500,
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  fontFamily: 'inherit',
+                  flexShrink: 0,
+                }}
+              >
+                Cerca
+              </button>
+            </div>
+          )}
+
+          {/* Bottone GPS */}
+          {modalitaRicerca === 'gps' && (
             <button
-              onClick={handleGeo}
+              onClick={handleGps}
               disabled={loading}
               style={{
+                marginTop: 10,
                 width: '100%',
-                padding: '13px 20px',
+                padding: '12px 20px',
                 background: loading ? '#555' : 'var(--text)',
                 color: 'white',
                 border: 'none',
@@ -111,7 +215,6 @@ export default function Home() {
                 justifyContent: 'center',
                 gap: 8,
                 fontFamily: 'inherit',
-                letterSpacing: '-0.1px',
                 transition: 'background 0.2s',
               }}
             >
@@ -128,11 +231,11 @@ export default function Home() {
                     <circle cx="12" cy="12" r="3" />
                     <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
                   </svg>
-                  Usa la mia posizione
+                  Rileva posizione
                 </>
               )}
             </button>
-          </div>
+          )}
 
           {errore && (
             <div style={{ marginTop: 12, padding: '10px 14px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 8, fontSize: 13, color: '#dc2626' }}>
@@ -147,8 +250,8 @@ export default function Home() {
         <div style={{ maxWidth: 600, margin: '0 auto', padding: '20px 20px 40px' }} className="animate-fadeup">
           {risultati.length === 0 && !loading ? (
             <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--muted)', fontSize: 14 }}>
-              Nessun distributore nel raggio di {raggio} km.<br />
-              <span style={{ fontSize: 13 }}>Prova ad aumentare il raggio.</span>
+              Nessun distributore trovato.<br />
+              <span style={{ fontSize: 13 }}>Prova ad aumentare il raggio o cambiare marca.</span>
             </div>
           ) : (
             <>
@@ -172,45 +275,42 @@ export default function Home() {
         </div>
       )}
 
-      {/* Come funziona — visibile solo prima della ricerca */}
+      {/* Come funziona */}
       {!cercato && (
         <div style={{ maxWidth: 600, margin: '40px auto 0', padding: '0 20px 60px' }}>
-          <p style={{ fontSize: 12, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 20 }}>Come funziona</p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+          <p style={{ fontSize: 11, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 20 }}>Come funziona</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
             {[
-              { n: '01', titolo: 'Seleziona', desc: 'Scegli il carburante e il raggio di ricerca' },
-              { n: '02', titolo: 'Localizza', desc: 'Condividi la posizione in un tap' },
-              { n: '03', titolo: 'Risparmia', desc: 'Vai al distributore più economico vicino a te' },
+              { n: '01', titolo: 'Filtra', desc: 'Scegli carburante, raggio e marca' },
+              { n: '02', titolo: 'Localizza', desc: 'GPS o cerca per indirizzo' },
+              { n: '03', titolo: 'Risparmia', desc: 'Vai al distributore più economico' },
             ].map((step) => (
-              <div key={step.n} style={{ padding: '16px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10 }}>
+              <div key={step.n} style={{ padding: 16, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10 }}>
                 <div style={{ fontFamily: 'DM Mono, monospace', fontSize: 11, color: 'var(--muted)', marginBottom: 8 }}>{step.n}</div>
-                <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 4, color: 'var(--text)' }}>{step.titolo}</div>
+                <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4 }}>{step.titolo}</div>
                 <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.5 }}>{step.desc}</div>
               </div>
             ))}
           </div>
 
-          <div style={{ marginTop: 32, padding: '20px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10, display: 'flex', gap: 16, alignItems: 'center' }}>
-            <div style={{ flexShrink: 0, width: 40, height: 40, background: 'var(--green-bg)', border: '1px solid var(--green-border)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="2">
+          <div style={{ marginTop: 24, padding: 20, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10, display: 'flex', gap: 16, alignItems: 'center' }}>
+            <div style={{ flexShrink: 0, width: 38, height: 38, background: 'var(--green-bg)', border: '1px solid var(--green-border)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="2">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
               </svg>
             </div>
             <div>
-              <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 2 }}>Dati ufficiali del MISE</div>
+              <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 2 }}>Dati ufficiali MISE</div>
               <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.5 }}>
-                I prezzi provengono dal Ministero delle Imprese e del Made in Italy. Aggiornati ogni notte alle 03:00.
+                Prezzi dal Ministero delle Imprese e del Made in Italy. Aggiornati ogni notte.
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Footer */}
       <footer style={{ borderTop: '1px solid var(--border)', padding: '20px', textAlign: 'center' }}>
-        <p style={{ fontSize: 12, color: 'var(--muted)' }}>
-          TrovaCarburante · Dati MISE · Aggiornati ogni notte
-        </p>
+        <p style={{ fontSize: 12, color: 'var(--muted)' }}>TrovaCarburante · Dati MISE · Aggiornati ogni notte</p>
       </footer>
     </div>
   );
