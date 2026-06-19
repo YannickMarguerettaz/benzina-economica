@@ -1,0 +1,35 @@
+name: Aggiorna dati MISE
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Installa dipendenze
+        run: npm ci
+
+      - name: Fetch dati distributori
+        run: npm run fetch-data
+
+      - name: Genera dati province
+        run: npm run generate-seo
+
+      - name: Commit e push dati aggiornati
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/distributori.json public/data/province.json
+          git diff --staged --quiet || git commit -m "chore: aggiorna dati MISE $(date -u +%Y-%m-%d)"
+          git push
