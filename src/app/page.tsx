@@ -105,10 +105,8 @@ export default function Home() {
       <header style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)' }}>
         <div style={{ maxWidth: 900, margin: '0 auto', padding: '0 32px', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{ width: 34, height: 34, background: 'var(--text)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
-                <path d="M3 22V8l9-6 9 6v14M9 22V12h6v10" />
-              </svg>
+            <div style={{ width: 34, height: 34, borderRadius: 8, overflow: 'hidden', flexShrink: 0 }}>
+              <img src="/icon-192.png" alt="TrovaCarburante" width={34} height={34} style={{ display: 'block' }} />
             </div>
             <span style={{ fontWeight: 700, fontSize: 17, letterSpacing: '-0.4px', color: 'var(--text)' }}>TrovaCarburante</span>
           </div>
