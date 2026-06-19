@@ -118,25 +118,22 @@ export default function Home() {
 
       {/* Hero */}
       {!cercato && (
-        <section style={{ background: 'var(--text)', color: 'white', padding: '64px 32px' }}>
+        <section className="hero-section" style={{ background: 'var(--text)', color: 'white', padding: '64px 32px' }}>
           <div style={{ maxWidth: 900, margin: '0 auto' }}>
-            <p style={{ fontSize: 12, letterSpacing: '2.5px', textTransform: 'uppercase', opacity: 0.45, marginBottom: 20 }}>
-              21.673 distributori · aggiornati ogni notte
-            </p>
             <h2 style={{ fontSize: 'clamp(32px, 5vw, 52px)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-1.5px', margin: 0 }}>
               Trova il carburante<br />
               <span style={{ fontWeight: 700 }}>più economico vicino a te</span>
             </h2>
             <p style={{ fontSize: 16, opacity: 0.55, marginTop: 20, lineHeight: 1.7, maxWidth: 480 }}>
-              Prezzi reali dal Ministero delle Imprese. Niente registrazione, niente app da scaricare.
+              Niente registrazione, niente app da scaricare. Dati aggiornati ogni giorno.
             </p>
           </div>
         </section>
       )}
 
       {/* Card cerca */}
-      <div style={{ maxWidth: 900, margin: cercato ? '32px auto 0' : '-28px auto 0', padding: '0 32px', position: 'relative', zIndex: 10 }}>
-        <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16, padding: 28, boxShadow: '0 4px 32px rgba(0,0,0,0.08)' }}>
+      <div className="page-wrapper" style={{ maxWidth: 900, margin: cercato ? '32px auto 0' : '-28px auto 0', padding: '0 32px', position: 'relative', zIndex: 10 }}>
+        <div className="main-card" style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16, padding: 28, boxShadow: '0 4px 32px rgba(0,0,0,0.08)' }}>
 
           <FilterBar
             carburante={carburante}
@@ -332,7 +329,7 @@ export default function Home() {
       {!cercato && (
         <div style={{ maxWidth: 900, margin: '56px auto 0', padding: '0 32px 80px' }}>
           <p style={{ fontSize: 11, letterSpacing: '2.5px', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 24 }}>Come funziona</p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+          <div className="steps-grid">
             {[
               { n: '01', titolo: 'Filtra', desc: 'Scegli carburante, raggio e marca del distributore' },
               { n: '02', titolo: 'Localizza', desc: 'Usa il GPS oppure cerca per indirizzo o città' },
