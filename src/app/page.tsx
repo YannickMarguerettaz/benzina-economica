@@ -1,11 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import FilterBar from '@/components/FilterBar';
 import DistributoreCard from '@/components/DistributoreCard';
 import { fetchDistributori } from '@/lib/data';
 import { aggiungiDistanza, sortPerPrezzo } from '@/lib/geo';
 import { DistributoreConDistanza, Carburante } from '@/lib/types';
+
+const MappaDistributori = lazy(() => import('@/components/MappaDistributori'));
 
 async function geocodifica(indirizzo: string): Promise<{ lat: number; lng: number } | null> {
   const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(indirizzo + ', Italia')}&format=json&limit=1`;
@@ -26,10 +28,13 @@ export default function Home() {
   const [aggiornato, setAggiornato] = useState<string | null>(null);
   const [indirizzo, setIndirizzo] = useState('');
   const [modalitaRicerca, setModalitaRicerca] = useState<'gps' | 'indirizzo'>('gps');
+  const [vista, setVista] = useState<'lista' | 'mappa'>('lista');
+  const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
 
   const cerca = async (lat: number, lng: number) => {
     setLoading(true);
     setErrore(null);
+    setUserCoords({ lat, lng });
     try {
       const tutti = await fetchDistributori();
       const vicini = aggiungiDistanza(tutti, lat, lng, raggio);
@@ -255,21 +260,69 @@ export default function Home() {
             </div>
           ) : (
             <>
+              {/* Header risultati + toggle vista */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                 <span style={{ fontSize: 12, color: 'var(--muted)', fontWeight: 500, letterSpacing: '1px', textTransform: 'uppercase' }}>
                   {risultati.length} risultati
                 </span>
-                {aggiornato && (
+                <div style={{ display: 'flex', gap: 2, background: '#f0efed', borderRadius: 7, padding: 2 }}>
+                  {(['lista', 'mappa'] as const).map((v) => (
+                    <button
+                      key={v}
+                      onClick={() => setVista(v)}
+                      style={{
+                        padding: '5px 12px',
+                        borderRadius: 5,
+                        fontSize: 12,
+                        fontWeight: 500,
+                        border: 'none',
+                        cursor: 'pointer',
+                        background: vista === v ? 'white' : 'transparent',
+                        color: vista === v ? 'var(--text)' : 'var(--muted)',
+                        boxShadow: vista === v ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+                        fontFamily: 'inherit',
+                        transition: 'all 0.15s',
+                        textTransform: 'capitalize',
+                      }}
+                    >
+                      {v === 'lista' ? '≡ Lista' : '◎ Mappa'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {aggiornato && (
+                <div style={{ marginBottom: 12 }}>
                   <span style={{ fontSize: 12, color: 'var(--muted)' }}>
                     Dati del {new Date(aggiornato).toLocaleDateString('it-IT')}
                   </span>
-                )}
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                {risultati.map((d, i) => (
-                  <DistributoreCard key={d.id} distributore={d} carburante={carburante} rank={i} />
-                ))}
-              </div>
+                </div>
+              )}
+
+              {/* Vista lista */}
+              {vista === 'lista' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  {risultati.map((d, i) => (
+                    <DistributoreCard key={d.id} distributore={d} carburante={carburante} rank={i} />
+                  ))}
+                </div>
+              )}
+
+              {/* Vista mappa */}
+              {vista === 'mappa' && userCoords && (
+                <Suspense fallback={
+                  <div style={{ height: 420, background: '#f0efed', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, color: 'var(--muted)' }}>
+                    Caricamento mappa...
+                  </div>
+                }>
+                  <MappaDistributori
+                    distributori={risultati}
+                    carburante={carburante}
+                    userLat={userCoords.lat}
+                    userLng={userCoords.lng}
+                  />
+                </Suspense>
+              )}
             </>
           )}
         </div>
