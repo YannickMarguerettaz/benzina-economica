@@ -20,36 +20,42 @@ const RAGGI = [2, 5, 10, 20];
 
 export default function FilterBar({ carburante, raggio, onCarburanteChange, onRaggioChange }: Props) {
   return (
-    <div className="space-y-3">
-      <div className="flex gap-2 overflow-x-auto pb-1">
-        {CARBURANTI.map((c) => (
-          <button
-            key={c.value}
-            onClick={() => onCarburanteChange(c.value)}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-              carburante === c.value
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700'
-            }`}
-          >
-            {c.label}
-          </button>
-        ))}
+    <div className="space-y-4">
+      <div>
+        <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Carburante</p>
+        <div className="flex gap-1 border border-gray-200 rounded-lg p-1 bg-gray-50">
+          {CARBURANTI.map((c) => (
+            <button
+              key={c.value}
+              onClick={() => onCarburanteChange(c.value)}
+              className={`flex-1 py-1.5 rounded text-sm font-medium transition-colors ${
+                carburante === c.value
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              {c.label}
+            </button>
+          ))}
+        </div>
       </div>
-      <div className="flex gap-2">
-        {RAGGI.map((r) => (
-          <button
-            key={r}
-            onClick={() => onRaggioChange(r)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-              raggio === r
-                ? 'bg-gray-800 text-white'
-                : 'bg-gray-100 text-gray-600'
-            }`}
-          >
-            {r} km
-          </button>
-        ))}
+      <div>
+        <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Raggio</p>
+        <div className="flex gap-1 border border-gray-200 rounded-lg p-1 bg-gray-50">
+          {RAGGI.map((r) => (
+            <button
+              key={r}
+              onClick={() => onRaggioChange(r)}
+              className={`flex-1 py-1.5 rounded text-sm font-medium transition-colors ${
+                raggio === r
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              {r} km
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
