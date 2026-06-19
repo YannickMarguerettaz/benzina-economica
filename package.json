@@ -6,10 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "fetch-data": "node scripts/fetch-data.mjs"
   },
   "dependencies": {
+    "iconv-lite": "^0.7.2",
     "next": "16.2.9",
+    "node-fetch": "^3.3.2",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },
