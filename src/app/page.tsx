@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import GeoButton from '@/components/GeoButton';
 import FilterBar from '@/components/FilterBar';
 import DistributoreCard from '@/components/DistributoreCard';
 import { fetchDistributori } from '@/lib/data';
@@ -36,56 +35,183 @@ export default function Home() {
     }
   };
 
+  const handleGeo = () => {
+    if (!navigator.geolocation) {
+      setErrore('Il tuo browser non supporta la geolocalizzazione');
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => cerca(pos.coords.latitude, pos.coords.longitude),
+      () => setErrore('Impossibile rilevare la posizione. Controlla i permessi del browser.'),
+      { timeout: 10000, maximumAge: 60000 }
+    );
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-lg mx-auto px-4 py-4">
-          <h1 className="text-lg font-semibold text-gray-900 tracking-tight">TrovaCarburante</h1>
-          <p className="text-xs text-gray-400 mt-0.5">Prezzi aggiornati dal Ministero delle Imprese</p>
+    <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
+
+      {/* Header */}
+      <header style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)' }}>
+        <div style={{ maxWidth: 600, margin: '0 auto', padding: '0 20px', height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ width: 28, height: 28, background: 'var(--text)', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
+                <path d="M3 22V8l9-6 9 6v14M9 22V12h6v10" />
+              </svg>
+            </div>
+            <span style={{ fontWeight: 600, fontSize: 15, letterSpacing: '-0.3px', color: 'var(--text)' }}>TrovaCarburante</span>
+          </div>
+          <a href="/province" style={{ fontSize: 13, color: 'var(--muted)', textDecoration: 'none' }}>Tutte le province →</a>
         </div>
       </header>
 
-      <main className="max-w-lg mx-auto px-4 py-6 space-y-5">
-        <FilterBar
-          carburante={carburante}
-          raggio={raggio}
-          onCarburanteChange={setCarburante}
-          onRaggioChange={setRaggio}
-        />
-
-        <GeoButton onPosition={cerca} onError={setErrore} loading={loading} />
-
-        {errore && (
-          <div className="border border-red-200 bg-red-50 rounded-lg px-4 py-3 text-sm text-red-600">
-            {errore}
+      {/* Hero */}
+      {!cercato && (
+        <section style={{ background: 'var(--text)', color: 'white', padding: '48px 20px' }}>
+          <div style={{ maxWidth: 600, margin: '0 auto' }}>
+            <p style={{ fontSize: 12, letterSpacing: '2px', textTransform: 'uppercase', opacity: 0.5, marginBottom: 16 }}>
+              21.673 distributori · aggiornati ogni notte
+            </p>
+            <h2 style={{ fontSize: 'clamp(28px, 6vw, 42px)', fontWeight: 300, lineHeight: 1.2, letterSpacing: '-1px', marginBottom: 8 }}>
+              Trova il carburante<br />
+              <span style={{ fontWeight: 600 }}>più economico vicino a te</span>
+            </h2>
+            <p style={{ fontSize: 15, opacity: 0.6, marginTop: 16, lineHeight: 1.6 }}>
+              Prezzi reali dal Ministero delle Imprese.<br />Niente registrazione, niente app da scaricare.
+            </p>
           </div>
-        )}
+        </section>
+      )}
 
-        {cercato && risultati.length === 0 && !loading && (
-          <div className="text-center text-gray-400 text-sm py-10">
-            Nessun distributore nel raggio di {raggio} km.<br />
-            Prova ad aumentare il raggio.
-          </div>
-        )}
-
-        {risultati.length > 0 && (
-          <div className="space-y-2">
-            <div className="flex justify-between items-center pb-1">
-              <p className="text-xs font-medium text-gray-400 uppercase tracking-wider">
-                {risultati.length} risultati
-              </p>
-              {aggiornato && (
-                <p className="text-xs text-gray-400">
-                  Dati del {new Date(aggiornato).toLocaleDateString('it-IT')}
-                </p>
+      {/* Card cerca */}
+      <div style={{ maxWidth: 600, margin: cercato ? '24px auto 0' : '-24px auto 0', padding: '0 20px', position: 'relative', zIndex: 10 }}>
+        <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, padding: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
+          <FilterBar
+            carburante={carburante}
+            raggio={raggio}
+            onCarburanteChange={setCarburante}
+            onRaggioChange={setRaggio}
+          />
+          <div style={{ marginTop: 16 }}>
+            <button
+              onClick={handleGeo}
+              disabled={loading}
+              style={{
+                width: '100%',
+                padding: '13px 20px',
+                background: loading ? '#555' : 'var(--text)',
+                color: 'white',
+                border: 'none',
+                borderRadius: 8,
+                fontSize: 14,
+                fontWeight: 500,
+                cursor: loading ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                fontFamily: 'inherit',
+                letterSpacing: '-0.1px',
+                transition: 'background 0.2s',
+              }}
+            >
+              {loading ? (
+                <>
+                  <svg style={{ animation: 'spin 0.8s linear infinite' }} width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4" />
+                  </svg>
+                  Ricerca in corso...
+                </>
+              ) : (
+                <>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <circle cx="12" cy="12" r="3" />
+                    <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
+                  </svg>
+                  Usa la mia posizione
+                </>
               )}
+            </button>
+          </div>
+
+          {errore && (
+            <div style={{ marginTop: 12, padding: '10px 14px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 8, fontSize: 13, color: '#dc2626' }}>
+              {errore}
             </div>
-            {risultati.map((d, i) => (
-              <DistributoreCard key={d.id} distributore={d} carburante={carburante} rank={i} />
+          )}
+        </div>
+      </div>
+
+      {/* Risultati */}
+      {cercato && (
+        <div style={{ maxWidth: 600, margin: '0 auto', padding: '20px 20px 40px' }} className="animate-fadeup">
+          {risultati.length === 0 && !loading ? (
+            <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--muted)', fontSize: 14 }}>
+              Nessun distributore nel raggio di {raggio} km.<br />
+              <span style={{ fontSize: 13 }}>Prova ad aumentare il raggio.</span>
+            </div>
+          ) : (
+            <>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                <span style={{ fontSize: 12, color: 'var(--muted)', fontWeight: 500, letterSpacing: '1px', textTransform: 'uppercase' }}>
+                  {risultati.length} risultati
+                </span>
+                {aggiornato && (
+                  <span style={{ fontSize: 12, color: 'var(--muted)' }}>
+                    Dati del {new Date(aggiornato).toLocaleDateString('it-IT')}
+                  </span>
+                )}
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {risultati.map((d, i) => (
+                  <DistributoreCard key={d.id} distributore={d} carburante={carburante} rank={i} />
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      )}
+
+      {/* Come funziona — visibile solo prima della ricerca */}
+      {!cercato && (
+        <div style={{ maxWidth: 600, margin: '40px auto 0', padding: '0 20px 60px' }}>
+          <p style={{ fontSize: 12, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 20 }}>Come funziona</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+            {[
+              { n: '01', titolo: 'Seleziona', desc: 'Scegli il carburante e il raggio di ricerca' },
+              { n: '02', titolo: 'Localizza', desc: 'Condividi la posizione in un tap' },
+              { n: '03', titolo: 'Risparmia', desc: 'Vai al distributore più economico vicino a te' },
+            ].map((step) => (
+              <div key={step.n} style={{ padding: '16px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10 }}>
+                <div style={{ fontFamily: 'DM Mono, monospace', fontSize: 11, color: 'var(--muted)', marginBottom: 8 }}>{step.n}</div>
+                <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 4, color: 'var(--text)' }}>{step.titolo}</div>
+                <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.5 }}>{step.desc}</div>
+              </div>
             ))}
           </div>
-        )}
-      </main>
+
+          <div style={{ marginTop: 32, padding: '20px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10, display: 'flex', gap: 16, alignItems: 'center' }}>
+            <div style={{ flexShrink: 0, width: 40, height: 40, background: 'var(--green-bg)', border: '1px solid var(--green-border)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              </svg>
+            </div>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 2 }}>Dati ufficiali del MISE</div>
+              <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.5 }}>
+                I prezzi provengono dal Ministero delle Imprese e del Made in Italy. Aggiornati ogni notte alle 03:00.
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Footer */}
+      <footer style={{ borderTop: '1px solid var(--border)', padding: '20px', textAlign: 'center' }}>
+        <p style={{ fontSize: 12, color: 'var(--muted)' }}>
+          TrovaCarburante · Dati MISE · Aggiornati ogni notte
+        </p>
+      </footer>
     </div>
   );
 }
