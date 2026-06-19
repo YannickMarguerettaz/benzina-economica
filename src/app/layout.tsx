@@ -2,18 +2,22 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Benzina Economica — Trova il distributore più conveniente vicino a te',
+  title: 'TrovaCarburante — Trova il distributore più economico vicino a te',
   description: 'Prezzi benzina e diesel aggiornati ogni giorno dal MISE. Trova il distributore più economico vicino a te in Italia.',
   manifest: '/manifest.json',
+  icons: {
+    icon: '/icon-192.png',
+    apple: '/icon-192.png',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Benzina Economica',
+    title: 'TrovaCarburante',
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: '#2563eb',
+  themeColor: '#1a6b3a',
   width: 'device-width',
   initialScale: 1,
 };
