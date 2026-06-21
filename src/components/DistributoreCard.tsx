@@ -53,10 +53,10 @@ export default function DistributoreCard({ distributore: d, carburante, rank }: 
 
       {/* Info */}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text)', wordBreak: 'break-word' }}>
           {d.nome || d.gestore}
         </div>
-        <div style={{ fontSize: 13, color: 'var(--muted)', marginTop: 3, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        <div style={{ fontSize: 13, color: 'var(--muted)', marginTop: 3, wordBreak: 'break-word' }}>
           {d.indirizzo} · {d.comune}
         </div>
         <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 3 }}>
