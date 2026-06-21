@@ -81,9 +81,9 @@ export default function MappaItalia() {
         <div style={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
           <ComposableMap
             projection="geoMercator"
-            projectionConfig={{ center: [12.5, 42.5], scale: 2400 }}
+            projectionConfig={{ center: [12.5, 41.5], scale: 2200 }}
             width={500}
-            height={540}
+            height={600}
             style={{ width: '100%', maxWidth: 500, height: 'auto' }}
           >
             <Geographies geography={GEO_URL}>
