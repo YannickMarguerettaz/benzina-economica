@@ -6,9 +6,10 @@ interface Props {
   distributore: DistributoreConDistanza;
   carburante: Carburante;
   rank: number;
+  isWorst?: boolean;
 }
 
-export default function DistributoreCard({ distributore: d, carburante, rank }: Props) {
+export default function DistributoreCard({ distributore: d, carburante, rank, isWorst }: Props) {
   const prezzo = d.prezzi[carburante];
   const mapsUrl = `https://maps.google.com/?q=${d.lat},${d.lng}`;
   const isBest = rank === 0;
@@ -24,8 +25,8 @@ export default function DistributoreCard({ distributore: d, carburante, rank }: 
         alignItems: 'center',
         gap: 18,
         padding: '18px 20px',
-        background: isBest ? 'var(--green-bg)' : 'var(--surface)',
-        border: `1px solid ${isBest ? 'var(--green-border)' : 'var(--border)'}`,
+        background: isBest ? 'var(--green-bg)' : isWorst ? '#fff5f5' : 'var(--surface)',
+        border: `1px solid ${isBest ? 'var(--green-border)' : isWorst ? '#fecaca' : 'var(--border)'}`,
         borderRadius: 12,
         textDecoration: 'none',
       }}
@@ -35,7 +36,7 @@ export default function DistributoreCard({ distributore: d, carburante, rank }: 
         flexShrink: 0,
         width: 28,
         height: 28,
-        background: isBest ? 'var(--green)' : '#f0efed',
+        background: isBest ? 'var(--green)' : isWorst ? '#fca5a5' : '#f0efed',
         borderRadius: 6,
         display: 'flex',
         alignItems: 'center',
@@ -45,7 +46,7 @@ export default function DistributoreCard({ distributore: d, carburante, rank }: 
           fontFamily: 'DM Mono, monospace',
           fontSize: 11,
           fontWeight: 500,
-          color: isBest ? 'white' : 'var(--muted)',
+          color: isBest ? 'white' : isWorst ? 'white' : 'var(--muted)',
         }}>
           {rank + 1}
         </span>
@@ -72,7 +73,7 @@ export default function DistributoreCard({ distributore: d, carburante, rank }: 
               fontFamily: 'DM Mono, monospace',
               fontSize: 24,
               fontWeight: 500,
-              color: isBest ? 'var(--green)' : 'var(--text)',
+              color: isBest ? 'var(--green)' : isWorst ? '#dc2626' : 'var(--text)',
               lineHeight: 1,
               letterSpacing: '-0.5px',
             }}>

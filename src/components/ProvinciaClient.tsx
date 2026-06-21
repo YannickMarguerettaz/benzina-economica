@@ -31,6 +31,7 @@ const TABS: { value: Carburante; label: string }[] = [
 export default function ProvinciaClient({ prov, distributori }: Props) {
   const [tab, setTab] = useState<Carburante>('benzina');
   const [tuttiVisibili, setTuttiVisibili] = useState(false);
+  const [ordine, setOrdine] = useState<'asc' | 'desc'>('asc');
 
   const risparmio = prov.min_benzina && prov.media_benzina
     ? ((prov.media_benzina - prov.min_benzina) * 50).toFixed(1)
@@ -38,7 +39,10 @@ export default function ProvinciaClient({ prov, distributori }: Props) {
 
   const tuttiOrdinati = [...distributori]
     .filter(d => d.prezzi[tab])
-    .sort((a, b) => (a.prezzi[tab] ?? 99) - (b.prezzi[tab] ?? 99));
+    .sort((a, b) => ordine === 'asc'
+      ? (a.prezzi[tab] ?? 99) - (b.prezzi[tab] ?? 99)
+      : (b.prezzi[tab] ?? 0) - (a.prezzi[tab] ?? 0)
+    );
 
   const ordinati = tuttiVisibili ? tuttiOrdinati : tuttiOrdinati.slice(0, 5);
 
@@ -179,13 +183,13 @@ export default function ProvinciaClient({ prov, distributori }: Props) {
           </Link>
         </div>
 
-        {/* Tabs carburante */}
-        <div style={{ marginBottom: 20 }}>
+        {/* Tabs carburante + ordinamento */}
+        <div style={{ marginBottom: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
           <div style={{ display: 'flex', gap: 2, background: '#f0efed', borderRadius: 10, padding: 4, width: 'fit-content' }}>
             {TABS.map((t) => (
               <button
                 key={t.value}
-                onClick={() => { setTab(t.value); setTuttiVisibili(false); }}
+                onClick={() => { setTab(t.value); setTuttiVisibili(false); setOrdine('asc'); }}
                 style={{
                   padding: '8px 18px',
                   borderRadius: 7,
@@ -201,6 +205,30 @@ export default function ProvinciaClient({ prov, distributori }: Props) {
                 }}
               >
                 {t.label}
+              </button>
+            ))}
+          </div>
+
+          <div style={{ display: 'flex', gap: 2, background: '#f0efed', borderRadius: 10, padding: 4 }}>
+            {([['asc', '↑ Meno caro'], ['desc', '↓ Più caro']] as const).map(([val, label]) => (
+              <button
+                key={val}
+                onClick={() => { setOrdine(val); setTuttiVisibili(false); }}
+                style={{
+                  padding: '8px 14px',
+                  borderRadius: 7,
+                  fontSize: 13,
+                  fontWeight: 500,
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                  background: ordine === val ? 'var(--surface)' : 'transparent',
+                  color: ordine === val ? 'var(--text)' : 'var(--muted)',
+                  boxShadow: ordine === val ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+                  transition: 'all 0.15s',
+                }}
+              >
+                {label}
               </button>
             ))}
           </div>
@@ -234,6 +262,7 @@ export default function ProvinciaClient({ prov, distributori }: Props) {
                     distributore={{ ...d, distanzaKm: 0 }}
                     carburante={tab}
                     rank={i}
+                    isWorst={i === ordinati.length - 1 && ordinati.length > 1}
                   />
                 ))}
               </div>
