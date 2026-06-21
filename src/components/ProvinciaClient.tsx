@@ -261,8 +261,8 @@ export default function ProvinciaClient({ prov, distributori }: Props) {
                     key={d.id}
                     distributore={{ ...d, distanzaKm: 0 }}
                     carburante={tab}
-                    rank={i}
-                    isWorst={i === ordinati.length - 1 && ordinati.length > 1}
+                    rank={ordine === 'desc' ? 99 : i}
+                    isWorst={ordine === 'desc' ? i === 0 : i === ordinati.length - 1 && ordinati.length > 1}
                   />
                 ))}
               </div>
