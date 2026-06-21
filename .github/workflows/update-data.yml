@@ -26,10 +26,13 @@ jobs:
       - name: Genera dati province
         run: npm run generate-seo
 
+      - name: Salva snapshot storico
+        run: npm run save-storico
+
       - name: Commit e push dati aggiornati
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add public/data/distributori.json public/data/province.json
+          git add public/data/distributori.json public/data/province.json public/data/storico.json
           git diff --staged --quiet || git commit -m "chore: aggiorna dati MISE $(date -u +%Y-%m-%d)"
           git push
