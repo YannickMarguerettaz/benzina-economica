@@ -13,8 +13,7 @@ interface Provincia {
   nome: string;
   slug: string;
   totale_distributori: number;
-  min_benzina: number | null;
-  min_diesel: number | null;
+  media_benzina: number | null;
 }
 
 const NOMI_CORRETTI: Record<string, string> = {
@@ -86,7 +85,7 @@ export default function PaginaProvince() {
             Prezzi benzina per provincia
           </h1>
           <p style={{ fontSize: 17, color: 'rgba(255,255,255,0.65)', maxWidth: 520, lineHeight: 1.6, marginBottom: 32 }}>
-            Tutte le 107 province italiane con il prezzo minimo della benzina aggiornato ogni notte. Trova dove costa meno nella tua zona.
+            Tutte le 107 province italiane con il prezzo medio della benzina aggiornato ogni notte. Trova dove costa meno nella tua zona.
           </p>
 
           {/* Stat bar */}
@@ -143,7 +142,7 @@ export default function PaginaProvince() {
             const province = regioniMap[regione] ?? [];
             const anchor = regione.toLowerCase().replace(/[^a-z0-9]+/g, '-');
             const minBenzina = province.reduce((min, p) => {
-              if (p.min_benzina && p.min_benzina < (min ?? 99)) return p.min_benzina;
+              if (p.media_benzina && p.media_benzina < (min ?? 99)) return p.media_benzina;
               return min;
             }, null as number | null);
 
@@ -162,7 +161,7 @@ export default function PaginaProvince() {
                     {regione}
                   </h2>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-                    <span style={{ fontSize: 11, color: 'var(--muted)' }}>min benzina</span>
+                    <span style={{ fontSize: 11, color: 'var(--muted)' }}>media benzina</span>
                     {minBenzina && (
                       <span className="font-mono" style={{ fontSize: 16, fontWeight: 500, color: 'var(--green)' }}>
                         {minBenzina.toFixed(3)}€
@@ -208,14 +207,14 @@ export default function PaginaProvince() {
                           </span>
                         </div>
 
-                        {p.min_benzina && (
+                        {p.media_benzina && (
                           <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
                             <span className="font-mono" style={{
                               fontSize: 20,
                               fontWeight: 500,
-                              color: p.min_benzina === minBenzina ? 'var(--green)' : 'var(--text)',
+                              color: p.media_benzina === minBenzina ? 'var(--green)' : 'var(--text)',
                             }}>
-                              {p.min_benzina.toFixed(3)}
+                              {p.media_benzina.toFixed(3)}
                             </span>
                             <span style={{ fontSize: 11, color: 'var(--muted)' }}>€/L</span>
                           </div>
