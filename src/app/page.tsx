@@ -254,18 +254,17 @@ export default function Home() {
               </button>
             </div>
 
-            {/* Raggio */}
+            {/* Carburante */}
             <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginBottom: 16, flexWrap: 'wrap' }}>
-              <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', alignSelf: 'center' }}>Raggio:</span>
-              {RAGGI.map(r => (
-                <button key={r} onClick={() => setRaggio(r)} style={{
+              {CARBURANTI.map(c => (
+                <button key={c.value} onClick={() => setCarburante(c.value)} style={{
                   padding: '5px 14px', borderRadius: 20, fontSize: 13, fontWeight: 500,
-                  border: raggio === r ? '1px solid white' : '1px solid rgba(255,255,255,0.2)',
-                  background: raggio === r ? 'white' : 'transparent',
-                  color: raggio === r ? 'var(--text)' : 'rgba(255,255,255,0.7)',
+                  border: carburante === c.value ? '1px solid white' : '1px solid rgba(255,255,255,0.2)',
+                  background: carburante === c.value ? 'white' : 'transparent',
+                  color: carburante === c.value ? 'var(--text)' : 'rgba(255,255,255,0.7)',
                   cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
                 }}>
-                  {r} km
+                  {c.label}
                 </button>
               ))}
             </div>
@@ -286,19 +285,19 @@ export default function Home() {
             {filtriAperti && (
               <div style={{ marginTop: 16, padding: 20, background: 'rgba(255,255,255,0.06)', borderRadius: 12, border: '1px solid rgba(255,255,255,0.1)', textAlign: 'left' }} className="animate-fadeup">
 
-                {/* Carburante */}
+                {/* Raggio */}
                 <div style={{ marginBottom: 16 }}>
-                  <span style={{ fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '1.5px', display: 'block', marginBottom: 10 }}>Carburante</span>
+                  <span style={{ fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '1.5px', display: 'block', marginBottom: 10 }}>Raggio</span>
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                    {CARBURANTI.map(c => (
-                      <button key={c.value} onClick={() => setCarburante(c.value)} style={{
+                    {RAGGI.map(r => (
+                      <button key={r} onClick={() => setRaggio(r)} style={{
                         padding: '6px 14px', borderRadius: 20, fontSize: 13, fontWeight: 500,
-                        border: carburante === c.value ? '1px solid white' : '1px solid rgba(255,255,255,0.2)',
-                        background: carburante === c.value ? 'white' : 'transparent',
-                        color: carburante === c.value ? 'var(--text)' : 'rgba(255,255,255,0.7)',
+                        border: raggio === r ? '1px solid white' : '1px solid rgba(255,255,255,0.2)',
+                        background: raggio === r ? 'white' : 'transparent',
+                        color: raggio === r ? 'var(--text)' : 'rgba(255,255,255,0.7)',
                         cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
                       }}>
-                        {c.label}
+                        {r} km
                       </button>
                     ))}
                   </div>
