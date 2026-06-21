@@ -138,8 +138,48 @@ export default function Home() {
             </p>
 
             {/* Barra ricerca principale */}
-            <div style={{ background: 'white', borderRadius: 14, padding: 8, display: 'flex', gap: 8, boxShadow: '0 8px 40px rgba(0,0,0,0.2)', marginBottom: 16 }}>
-              {modalitaRicerca === 'indirizzo' ? (
+            {modalitaRicerca === 'gps' ? (
+              <button
+                onClick={handleGps}
+                disabled={loading}
+                style={{
+                  width: '100%',
+                  padding: '18px 28px',
+                  background: loading ? '#555' : 'var(--green)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: 14,
+                  fontSize: 16,
+                  fontWeight: 600,
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  fontFamily: 'inherit',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 10,
+                  marginBottom: 16,
+                  boxShadow: '0 8px 40px rgba(0,0,0,0.2)',
+                  transition: 'background 0.2s',
+                }}
+              >
+                {loading ? (
+                  <>
+                    <svg style={{ animation: 'spin 0.8s linear infinite' }} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4" />
+                    </svg>
+                    Ricerca in corso...
+                  </>
+                ) : (
+                  <>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
+                    </svg>
+                    Cerca vicino a me
+                  </>
+                )}
+              </button>
+            ) : (
+              <div style={{ background: 'white', borderRadius: 14, padding: 8, display: 'flex', gap: 8, boxShadow: '0 8px 40px rgba(0,0,0,0.2)', marginBottom: 16 }}>
                 <input
                   type="text"
                   placeholder="Es. Via Roma 1, Milano o solo la città..."
@@ -158,52 +198,41 @@ export default function Home() {
                     outline: 'none',
                   }}
                 />
-              ) : (
-                <div style={{ flex: 1, padding: '14px 18px', fontSize: 15, color: '#aaa', textAlign: 'left' }}>
-                  Ricerca tramite GPS...
-                </div>
-              )}
-              <button
-                onClick={modalitaRicerca === 'gps' ? handleGps : handleIndirizzo}
-                disabled={loading}
-                style={{
-                  padding: '14px 28px',
-                  background: loading ? '#555' : 'var(--green)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: 10,
-                  fontSize: 15,
-                  fontWeight: 600,
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  fontFamily: 'inherit',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  flexShrink: 0,
-                  transition: 'background 0.2s',
-                }}
-              >
-                {loading ? (
-                  <svg style={{ animation: 'spin 0.8s linear infinite' }} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4" />
-                  </svg>
-                ) : modalitaRicerca === 'gps' ? (
-                  <>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
+                <button
+                  onClick={handleIndirizzo}
+                  disabled={loading}
+                  style={{
+                    padding: '14px 28px',
+                    background: loading ? '#555' : 'var(--green)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: 10,
+                    fontSize: 15,
+                    fontWeight: 600,
+                    cursor: loading ? 'not-allowed' : 'pointer',
+                    fontFamily: 'inherit',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    flexShrink: 0,
+                    transition: 'background 0.2s',
+                  }}
+                >
+                  {loading ? (
+                    <svg style={{ animation: 'spin 0.8s linear infinite' }} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4" />
                     </svg>
-                    Cerca vicino a me
-                  </>
-                ) : (
-                  <>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
-                    </svg>
-                    Cerca
-                  </>
-                )}
-              </button>
-            </div>
+                  ) : (
+                    <>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
+                      </svg>
+                      Cerca
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
 
             {/* Toggle GPS / Indirizzo */}
             <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginBottom: 20 }}>
