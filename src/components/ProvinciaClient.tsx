@@ -30,15 +30,17 @@ const TABS: { value: Carburante; label: string }[] = [
 
 export default function ProvinciaClient({ prov, distributori }: Props) {
   const [tab, setTab] = useState<Carburante>('benzina');
+  const [tuttiVisibili, setTuttiVisibili] = useState(false);
 
   const risparmio = prov.min_benzina && prov.media_benzina
     ? ((prov.media_benzina - prov.min_benzina) * 50).toFixed(1)
     : null;
 
-  const ordinati = [...distributori]
+  const tuttiOrdinati = [...distributori]
     .filter(d => d.prezzi[tab])
-    .sort((a, b) => (a.prezzi[tab] ?? 99) - (b.prezzi[tab] ?? 99))
-    .slice(0, 20);
+    .sort((a, b) => (a.prezzi[tab] ?? 99) - (b.prezzi[tab] ?? 99));
+
+  const ordinati = tuttiVisibili ? tuttiOrdinati : tuttiOrdinati.slice(0, 10);
 
   return (
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
@@ -183,7 +185,7 @@ export default function ProvinciaClient({ prov, distributori }: Props) {
             {TABS.map((t) => (
               <button
                 key={t.value}
-                onClick={() => setTab(t.value)}
+                onClick={() => { setTab(t.value); setTuttiVisibili(false); }}
                 style={{
                   padding: '8px 18px',
                   borderRadius: 7,
@@ -224,16 +226,39 @@ export default function ProvinciaClient({ prov, distributori }: Props) {
               Nessun distributore con prezzi {TABS.find(t => t.value === tab)?.label.toLowerCase()} disponibili in questa provincia.
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              {ordinati.map((d, i) => (
-                <DistributoreCard
-                  key={d.id}
-                  distributore={{ ...d, distanzaKm: 0 }}
-                  carburante={tab}
-                  rank={i}
-                />
-              ))}
-            </div>
+            <>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {ordinati.map((d, i) => (
+                  <DistributoreCard
+                    key={d.id}
+                    distributore={{ ...d, distanzaKm: 0 }}
+                    carburante={tab}
+                    rank={i}
+                  />
+                ))}
+              </div>
+
+              {!tuttiVisibili && tuttiOrdinati.length > 10 && (
+                <button
+                  onClick={() => setTuttiVisibili(true)}
+                  style={{
+                    marginTop: 16,
+                    width: '100%',
+                    padding: '14px',
+                    background: 'var(--surface)',
+                    border: '1px solid var(--border)',
+                    borderRadius: 10,
+                    fontSize: 14,
+                    fontWeight: 600,
+                    color: 'var(--text)',
+                    cursor: 'pointer',
+                    fontFamily: 'inherit',
+                  }}
+                >
+                  Vedi tutti i {tuttiOrdinati.length} distributori
+                </button>
+              )}
+            </>
           )}
         </div>
 
