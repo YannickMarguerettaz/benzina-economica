@@ -44,147 +44,196 @@ const REGIONI: Record<string, string[]> = {
   'Sardegna': ['CA', 'NU', 'OR', 'SS', 'SU'],
 };
 
-function getProvince(): Record<string, Provincia[]> {
+function getProvince(): { regioniMap: Record<string, Provincia[]>; totaleDistributori: number } {
   const path = join(process.cwd(), 'public', 'data', 'province.json');
   const tutte: Provincia[] = JSON.parse(readFileSync(path, 'utf-8')).province;
 
   const bySigna: Record<string, Provincia> = {};
+  let totaleDistributori = 0;
   for (const p of tutte) {
     bySigna[p.sigla] = { ...p, nome: NOMI_CORRETTI[p.sigla] ?? p.nome };
+    totaleDistributori += p.totale_distributori;
   }
 
-  const result: Record<string, Provincia[]> = {};
+  const regioniMap: Record<string, Provincia[]> = {};
   for (const [regione, sigle] of Object.entries(REGIONI)) {
-    result[regione] = sigle
+    regioniMap[regione] = sigle
       .map((s) => bySigna[s])
       .filter(Boolean)
       .sort((a, b) => a.nome.localeCompare(b.nome, 'it'));
   }
-  return result;
+  return { regioniMap, totaleDistributori };
 }
 
 export default function PaginaProvince() {
-  const regioniMap = getProvince();
+  const { regioniMap, totaleDistributori } = getProvince();
   const regioni = Object.keys(REGIONI);
 
   return (
-    <main style={{ maxWidth: 900, margin: '0 auto', padding: '40px 20px' }}>
+    <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
 
-      {/* Header */}
-      <div style={{ marginBottom: 40 }}>
-        <Link href="/" style={{ color: 'var(--muted)', fontSize: 14, textDecoration: 'none' }}>
-          ← Torna alla ricerca
-        </Link>
-        <h1 style={{ fontSize: 28, fontWeight: 600, marginTop: 16, marginBottom: 8 }}>
-          Prezzi carburante per provincia
-        </h1>
-        <p style={{ color: 'var(--muted)', fontSize: 15 }}>
-          107 province monitorate · dati aggiornati ogni notte
-        </p>
+      {/* Hero */}
+      <div style={{
+        background: 'var(--text)',
+        color: '#fff',
+        padding: '56px 24px 48px',
+      }}>
+        <div style={{ maxWidth: 900, margin: '0 auto' }}>
+          <Link href="/" style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13, textDecoration: 'none', display: 'inline-block', marginBottom: 24 }}>
+            ← Torna alla ricerca
+          </Link>
+          <h1 style={{ fontSize: 36, fontWeight: 600, lineHeight: 1.2, marginBottom: 12 }}>
+            Prezzi benzina per provincia
+          </h1>
+          <p style={{ fontSize: 17, color: 'rgba(255,255,255,0.65)', maxWidth: 520, lineHeight: 1.6, marginBottom: 32 }}>
+            Tutte le 107 province italiane con il prezzo minimo della benzina aggiornato ogni notte. Trova dove costa meno nella tua zona.
+          </p>
+
+          {/* Stat bar */}
+          <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap' }}>
+            <div>
+              <div style={{ fontSize: 28, fontWeight: 600, fontFamily: 'DM Mono, monospace' }}>107</div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>province monitorate</div>
+            </div>
+            <div style={{ width: 1, background: 'rgba(255,255,255,0.12)' }} />
+            <div>
+              <div style={{ fontSize: 28, fontWeight: 600, fontFamily: 'DM Mono, monospace' }}>
+                {totaleDistributori.toLocaleString('it')}
+              </div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>distributori attivi</div>
+            </div>
+            <div style={{ width: 1, background: 'rgba(255,255,255,0.12)' }} />
+            <div>
+              <div style={{ fontSize: 28, fontWeight: 600, fontFamily: 'DM Mono, monospace' }}>20</div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>regioni</div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Ancore regioni */}
-      <div style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: 8,
-        marginBottom: 48,
-        paddingBottom: 24,
-        borderBottom: '1px solid var(--border)',
-      }}>
-        {regioni.map((r) => (
-          <a
-            key={r}
-            href={`#${r.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
-            style={{
-              fontSize: 13,
-              padding: '5px 12px',
-              border: '1px solid var(--border)',
-              borderRadius: 20,
-              color: 'var(--text)',
-              textDecoration: 'none',
-              background: 'var(--surface)',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {r}
-          </a>
-        ))}
+      <div style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 10 }}>
+        <div style={{ maxWidth: 900, margin: '0 auto', padding: '12px 24px', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {regioni.map((r) => (
+            <a
+              key={r}
+              href={`#${r.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
+              style={{
+                fontSize: 12,
+                fontWeight: 500,
+                padding: '4px 12px',
+                border: '1px solid var(--border)',
+                borderRadius: 20,
+                color: 'var(--text)',
+                textDecoration: 'none',
+                background: 'var(--bg)',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {r}
+            </a>
+          ))}
+        </div>
       </div>
 
-      {/* Sezioni per regione */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 56 }}>
-        {regioni.map((regione) => {
-          const province = regioniMap[regione] ?? [];
-          const anchor = regione.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-          return (
-            <section key={regione} id={anchor}>
-              <h2 style={{
-                fontSize: 13,
-                fontWeight: 600,
-                letterSpacing: '0.08em',
-                textTransform: 'uppercase',
-                color: 'var(--muted)',
-                marginBottom: 16,
-                paddingBottom: 10,
-                borderBottom: '1px solid var(--border)',
-              }}>
-                {regione}
-              </h2>
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
-                gap: 10,
-              }}>
-                {province.map((p) => (
-                  <Link key={p.sigla} href={`/${p.slug}`} style={{ textDecoration: 'none' }}>
-                    <div
-                      className="station-card"
-                      style={{
-                        background: 'var(--surface)',
-                        border: '1px solid var(--border)',
-                        borderRadius: 10,
-                        padding: '14px 16px',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                        <span style={{ fontWeight: 600, fontSize: 14, color: 'var(--text)' }}>
-                          {p.nome}
-                        </span>
-                        <span style={{
-                          fontSize: 10,
-                          fontWeight: 500,
-                          color: 'var(--muted)',
-                          background: 'var(--bg)',
+      {/* Sezioni regioni */}
+      <div style={{ maxWidth: 900, margin: '0 auto', padding: '48px 24px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 56 }}>
+          {regioni.map((regione) => {
+            const province = regioniMap[regione] ?? [];
+            const anchor = regione.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            const minBenzina = province.reduce((min, p) => {
+              if (p.min_benzina && p.min_benzina < (min ?? 99)) return p.min_benzina;
+              return min;
+            }, null as number | null);
+
+            return (
+              <section key={regione} id={anchor}>
+                {/* Intestazione regione */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'baseline',
+                  justifyContent: 'space-between',
+                  marginBottom: 16,
+                  paddingBottom: 12,
+                  borderBottom: '1px solid var(--border)',
+                }}>
+                  <h2 style={{ fontSize: 18, fontWeight: 600, color: 'var(--text)' }}>
+                    {regione}
+                  </h2>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+                    <span style={{ fontSize: 11, color: 'var(--muted)' }}>min benzina</span>
+                    {minBenzina && (
+                      <span className="font-mono" style={{ fontSize: 16, fontWeight: 500, color: 'var(--green)' }}>
+                        {minBenzina.toFixed(3)}€
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Griglia province */}
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(175px, 1fr))',
+                  gap: 10,
+                }}>
+                  {province.map((p) => (
+                    <Link key={p.sigla} href={`/${p.slug}`} style={{ textDecoration: 'none' }}>
+                      <div
+                        className="station-card"
+                        style={{
+                          background: 'var(--surface)',
                           border: '1px solid var(--border)',
-                          borderRadius: 4,
-                          padding: '2px 5px',
-                        }}>
-                          {p.sigla}
-                        </span>
-                      </div>
-
-                      {p.min_benzina && (
-                        <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
-                          <span className="font-mono" style={{ fontSize: 18, fontWeight: 500, color: 'var(--green)' }}>
-                            {p.min_benzina.toFixed(3)}
+                          borderRadius: 10,
+                          padding: '14px 16px',
+                          cursor: 'pointer',
+                          height: '100%',
+                        }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                          <span style={{ fontWeight: 600, fontSize: 14, color: 'var(--text)' }}>
+                            {p.nome}
                           </span>
-                          <span style={{ fontSize: 11, color: 'var(--muted)' }}>€/L</span>
+                          <span style={{
+                            fontSize: 10,
+                            fontWeight: 600,
+                            color: 'var(--muted)',
+                            background: 'var(--bg)',
+                            border: '1px solid var(--border)',
+                            borderRadius: 4,
+                            padding: '2px 5px',
+                            letterSpacing: '0.05em',
+                          }}>
+                            {p.sigla}
+                          </span>
                         </div>
-                      )}
 
-                      <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 4 }}>
-                        {p.totale_distributori} distributori
+                        {p.min_benzina && (
+                          <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
+                            <span className="font-mono" style={{
+                              fontSize: 20,
+                              fontWeight: 500,
+                              color: p.min_benzina === minBenzina ? 'var(--green)' : 'var(--text)',
+                            }}>
+                              {p.min_benzina.toFixed(3)}
+                            </span>
+                            <span style={{ fontSize: 11, color: 'var(--muted)' }}>€/L</span>
+                          </div>
+                        )}
+
+                        <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 5 }}>
+                          {p.totale_distributori} distributori
+                        </div>
                       </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </section>
-          );
-        })}
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            );
+          })}
+        </div>
       </div>
-    </main>
+
+    </div>
   );
 }
