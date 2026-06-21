@@ -135,7 +135,7 @@ export default function ProvinciaClient({ prov, distributori }: Props) {
                     Oggi a {prov.nome} il distributore di benzina più economico pratica <strong>{prov.min_benzina.toFixed(3)}€/L</strong>,
                     quello più caro <strong>{prov.max_benzina.toFixed(3)}€/L</strong> —
                     sono <strong>{diffCentesimi} centesimi di differenza al litro</strong> tra due pompe nella stessa provincia.
-                    Su un pieno da 50 litri sono <strong>~{Math.round(parseFloat(risparmio))}€</strong>.
+                    Su un pieno da 50 litri sono <strong>~{risparmio ? Math.round(parseFloat(risparmio)) : '—'}€</strong>.
                     In un anno rappresentano un risparmio di{' '}
                     <strong style={{ fontSize: 16, color: 'var(--green)' }}>~{risparmioAnnuale}€</strong>.
                   </>
