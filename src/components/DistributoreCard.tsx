@@ -1,3 +1,5 @@
+'use client';
+
 import { DistributoreConDistanza, Carburante } from '@/lib/types';
 
 interface Props {
@@ -18,6 +20,7 @@ export default function DistributoreCard({ distributore: d, carburante, rank, pr
       href={mapsUrl}
       target="_blank"
       rel="noopener noreferrer"
+      className={isBest ? 'station-card station-card--best' : 'station-card'}
       style={{
         display: 'flex',
         alignItems: 'stretch',
@@ -27,11 +30,7 @@ export default function DistributoreCard({ distributore: d, carburante, rank, pr
         borderRadius: 12,
         textDecoration: 'none',
         overflow: 'hidden',
-        transition: 'box-shadow 0.15s',
-        boxShadow: isBest ? '0 2px 16px rgba(26,107,58,0.08)' : '0 1px 4px rgba(0,0,0,0.04)',
       }}
-      onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.10)')}
-      onMouseLeave={e => (e.currentTarget.style.boxShadow = isBest ? '0 2px 16px rgba(26,107,58,0.08)' : '0 1px 4px rgba(0,0,0,0.04)')}
     >
       {/* Rank */}
       <div style={{
