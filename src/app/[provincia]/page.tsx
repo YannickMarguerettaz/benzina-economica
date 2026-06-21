@@ -44,8 +44,8 @@ export async function generateMetadata({
   const prov = province.find((p) => p.slug === slug);
   if (!prov) return {};
   return {
-    title: `Benzina economica a ${prov.nome} — Prezzi aggiornati`,
-    description: `Trova il distributore più economico nella provincia di ${prov.nome}. Prezzo minimo benzina: ${prov.min_benzina?.toFixed(3) ?? 'N/D'}€/L. ${prov.totale_distributori} distributori monitorati.`,
+    title: `Prezzi benzina ${prov.nome} — Distributori più economici aggiornati`,
+    description: `Prezzi benzina e diesel a ${prov.nome} aggiornati ogni notte. Prezzo minimo benzina: ${prov.min_benzina?.toFixed(3) ?? 'N/D'}€/L. Confronta ${prov.totale_distributori} distributori e trova il più economico vicino a te.`,
   };
 }
 
@@ -68,7 +68,7 @@ export default async function PaginaProvincia({
     <main className="max-w-md mx-auto px-4 py-6 space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">
-          ⛽ Benzina economica a {prov.nome}
+          Prezzi benzina a {prov.nome}
         </h1>
         <p className="text-gray-500 text-sm mt-1">
           {prov.totale_distributori} distributori monitorati
