@@ -8,6 +8,21 @@ export const metadata: Metadata = {
   verification: {
     google: 'X_uIYJIrw1j4R27GcUt-_X_HBwDs1l2wsP7FARVdEeI',
   },
+  openGraph: {
+    title: 'TrovaCarburante — Trova il distributore più economico vicino a te',
+    description: 'Prezzi benzina e diesel aggiornati ogni giorno dal MISE. Trova il distributore più economico vicino a te in Italia.',
+    url: 'https://trovacarburante.com',
+    siteName: 'TrovaCarburante',
+    images: [{ url: 'https://trovacarburante.com/icon-512.png', width: 512, height: 512 }],
+    locale: 'it_IT',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'TrovaCarburante — Trova il distributore più economico vicino a te',
+    description: 'Prezzi benzina e diesel aggiornati ogni giorno dal MISE. Trova il distributore più economico vicino a te in Italia.',
+    images: ['https://trovacarburante.com/icon-512.png'],
+  },
   manifest: '/manifest.json',
   icons: {
     icon: '/icon-192.png',
