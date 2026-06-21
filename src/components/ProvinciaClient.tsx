@@ -37,6 +37,11 @@ export default function ProvinciaClient({ prov, distributori }: Props) {
     ? ((prov.media_benzina - prov.min_benzina) * 50).toFixed(1)
     : null;
 
+  // 11.000 km/anno, 7L/100km = 770L/anno ÷ 50L per pieno = ~15 pieni/anno
+  const risparmioAnnuale = risparmio
+    ? Math.round(parseFloat(risparmio) * 15)
+    : null;
+
   const tuttiOrdinati = [...distributori]
     .filter(d => d.prezzi[tab])
     .sort((a, b) => ordine === 'asc'
@@ -116,19 +121,22 @@ export default function ProvinciaClient({ prov, distributori }: Props) {
                 Quanto si risparmia
               </div>
               <h2 style={{ fontSize: 20, fontWeight: 700, lineHeight: 1.3, marginBottom: 12 }}>
-                La differenza tra il più caro e il più economico a {prov.nome}
+                A {prov.nome} puoi risparmiare fino a {risparmio}€ a pieno
               </h2>
               <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.8, margin: 0 }}>
                 {prov.min_benzina && prov.media_benzina ? (
                   <>
-                    Il distributore più economico pratica{' '}
-                    <strong>{prov.min_benzina.toFixed(3)}€/L</strong> per la benzina,
-                    contro una media di <strong>{prov.media_benzina.toFixed(3)}€/L</strong>.
-                    Su un pieno da 50 litri significa risparmiare{' '}
-                    <strong>~{risparmio}€</strong> rispetto alla media.
+                    Non tutti i distributori di {prov.nome} praticano lo stesso prezzo.
+                    Il più economico è a <strong>{prov.min_benzina.toFixed(3)}€/L</strong>,
+                    mentre la media provinciale si attesta a <strong>{prov.media_benzina.toFixed(3)}€/L</strong> —
+                    una differenza di <strong>{((prov.media_benzina - prov.min_benzina) * 100).toFixed(1)} centesimi al litro</strong>.{' '}
+                    Su un pieno da 50 litri, scegliere il distributore giusto vale <strong>~{risparmio}€ in meno</strong>.
+                    Su base annuale — considerando circa 15 pieni l'anno — significa risparmiare{' '}
+                    <strong style={{ fontSize: 16, color: 'var(--green)' }}>~{risparmioAnnuale}€ all'anno</strong>{' '}
+                    solo scegliendo dove fare benzina a {prov.nome}.
                   </>
                 ) : (
-                  `Confronta i prezzi dei distributori nella provincia di ${prov.nome}.`
+                  `Confronta i prezzi dei distributori nella provincia di ${prov.nome} e scegli quello più conveniente.`
                 )}
               </p>
             </div>
