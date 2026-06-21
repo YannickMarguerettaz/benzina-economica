@@ -14,6 +14,8 @@ interface Provincia {
   media_diesel: number | null;
   min_benzina: number | null;
   min_diesel: number | null;
+  max_benzina: number | null;
+  max_diesel: number | null;
 }
 
 function getProvince(): Provincia[] {

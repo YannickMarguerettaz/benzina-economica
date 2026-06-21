@@ -73,6 +73,8 @@ for (const [sigla, lista] of Object.entries(perProvincia)) {
     media_diesel: diesel.length ? Math.round(diesel.reduce((a, b) => a + b, 0) / diesel.length * 1000) / 1000 : null,
     min_benzina: benzine.length ? Math.round(Math.min(...benzine) * 1000) / 1000 : null,
     min_diesel: diesel.length ? Math.round(Math.min(...diesel) * 1000) / 1000 : null,
+    max_benzina: benzine.length ? Math.round(Math.max(...benzine) * 1000) / 1000 : null,
+    max_diesel: diesel.length ? Math.round(Math.max(...diesel) * 1000) / 1000 : null,
   });
 }
 

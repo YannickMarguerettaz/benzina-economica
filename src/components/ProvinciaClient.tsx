@@ -14,6 +14,8 @@ interface Provincia {
   media_diesel: number | null;
   min_benzina: number | null;
   min_diesel: number | null;
+  max_benzina: number | null;
+  max_diesel: number | null;
 }
 
 interface Props {
@@ -33,8 +35,12 @@ export default function ProvinciaClient({ prov, distributori }: Props) {
   const [tuttiVisibili, setTuttiVisibili] = useState(false);
   const [ordine, setOrdine] = useState<'asc' | 'desc'>('asc');
 
-  const risparmio = prov.min_benzina && prov.media_benzina
-    ? ((prov.media_benzina - prov.min_benzina) * 50).toFixed(1)
+  const diffCentesimi = prov.min_benzina && prov.max_benzina
+    ? ((prov.max_benzina - prov.min_benzina) * 100).toFixed(1)
+    : null;
+
+  const risparmio = prov.min_benzina && prov.max_benzina
+    ? ((prov.max_benzina - prov.min_benzina) * 50).toFixed(1)
     : null;
 
   // 11.000 km/anno, 7L/100km = 770L/anno ÷ 50L per pieno = ~15 pieni/anno
@@ -121,19 +127,18 @@ export default function ProvinciaClient({ prov, distributori }: Props) {
                 Quanto si risparmia
               </div>
               <h2 style={{ fontSize: 20, fontWeight: 700, lineHeight: 1.3, marginBottom: 12 }}>
-                A {prov.nome} puoi risparmiare fino a {risparmio}€ a pieno
+                A {prov.nome} la benzina non costa uguale per tutti
               </h2>
               <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.8, margin: 0 }}>
-                {prov.min_benzina && prov.media_benzina ? (
+                {prov.min_benzina && prov.max_benzina ? (
                   <>
-                    Non tutti i distributori di {prov.nome} praticano lo stesso prezzo.
-                    Il più economico è a <strong>{prov.min_benzina.toFixed(3)}€/L</strong>,
-                    mentre la media provinciale si attesta a <strong>{prov.media_benzina.toFixed(3)}€/L</strong> —
-                    una differenza di <strong>{((prov.media_benzina - prov.min_benzina) * 100).toFixed(1)} centesimi al litro</strong>.{' '}
-                    Su un pieno da 50 litri, scegliere il distributore giusto vale <strong>~{risparmio}€ in meno</strong>.
-                    Su base annuale — considerando circa 15 pieni l'anno — significa risparmiare{' '}
-                    <strong style={{ fontSize: 16, color: 'var(--green)' }}>~{risparmioAnnuale}€ all'anno</strong>{' '}
-                    solo scegliendo dove fare benzina a {prov.nome}.
+                    Oggi a {prov.nome} il distributore più economico pratica <strong>{prov.min_benzina.toFixed(3)}€/L</strong>,
+                    quello più caro <strong>{prov.max_benzina.toFixed(3)}€/L</strong> —
+                    una differenza di <strong>{diffCentesimi} centesimi al litro</strong> tra due pompe nella stessa provincia.
+                    Su un pieno da 50 litri sono <strong>~{risparmio}€</strong>.
+                    Su un anno — circa 15 pieni — chi sceglie sempre il distributore più economico risparmia{' '}
+                    <strong style={{ fontSize: 16, color: 'var(--green)' }}>~{risparmioAnnuale}€</strong>{' '}
+                    rispetto a chi si ferma al primo che trova.
                   </>
                 ) : (
                   `Confronta i prezzi dei distributori nella provincia di ${prov.nome} e scegli quello più conveniente.`
