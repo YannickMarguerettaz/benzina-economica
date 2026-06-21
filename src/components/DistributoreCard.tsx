@@ -36,7 +36,7 @@ export default function DistributoreCard({ distributore: d, carburante, rank, is
         flexShrink: 0,
         width: 28,
         height: 28,
-        background: isBest ? 'var(--green)' : isWorst ? '#fca5a5' : '#f0efed',
+        background: isBest ? 'var(--green)' : isWorst ? '#dc2626' : '#f0efed',
         borderRadius: 6,
         display: 'flex',
         alignItems: 'center',
