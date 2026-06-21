@@ -142,7 +142,7 @@ export default function Home() {
               <span style={{ fontWeight: 700 }}>più economico vicino a te</span>
             </h1>
             <p style={{ fontSize: 15, opacity: 0.5, marginTop: 16, lineHeight: 1.7, marginBottom: 40 }}>
-              Niente registrazione, niente app. Dati aggiornati ogni giorno.
+              Niente registrazione. Dati aggiornati ogni giorno.
             </p>
 
             {/* Barra ricerca principale */}
@@ -563,7 +563,7 @@ export default function Home() {
                   Ricerca per<br />posizione o indirizzo
                 </h2>
                 <p style={{ fontSize: 15, color: 'var(--muted)', lineHeight: 1.9, margin: 0 }}>
-                  Usa il GPS oppure cerca per indirizzo o città. Scegli il raggio da 2 a 20 km e ottieni la lista ordinata per prezzo. Nessuna registrazione, nessuna app.
+                  Usa il GPS oppure cerca per indirizzo o città. Scegli il raggio da 2 a 20 km e ottieni la lista ordinata per prezzo. Nessuna registrazione.
                 </p>
               </div>
             </div>
