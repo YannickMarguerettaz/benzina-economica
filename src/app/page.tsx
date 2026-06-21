@@ -64,6 +64,14 @@ export default function Home() {
       const res = await fetch('/data/distributori.json');
       const json = await res.json();
       setAggiornato(json.aggiornato);
+      (window as Window & { dataLayer?: object[] }).dataLayer = (window as Window & { dataLayer?: object[] }).dataLayer || [];
+      (window as Window & { dataLayer?: object[] }).dataLayer!.push({
+        event: 'search_performed',
+        method: modalitaRicerca,
+        carburante: carburanteEffettivo,
+        raggio: raggioEffettivo,
+        risultati: ordinati.length,
+      });
     } catch {
       setErrore('Errore nel caricamento dei dati. Riprova.');
     } finally {
