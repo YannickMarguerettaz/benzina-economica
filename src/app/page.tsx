@@ -42,19 +42,21 @@ export default function Home() {
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [filtriAperti, setFiltriAperti] = useState(false);
 
-  const cerca = async (lat: number, lng: number) => {
+  const cerca = async (lat: number, lng: number, overrideCarburante?: Carburante, overrideRaggio?: number) => {
+    const carburanteEffettivo = overrideCarburante ?? carburante;
+    const raggioEffettivo = overrideRaggio ?? raggio;
     setLoading(true);
     setErrore(null);
     setUserCoords({ lat, lng });
     try {
       const tutti = await fetchDistributori();
-      const vicini = aggiungiDistanza(tutti, lat, lng, raggio);
+      const vicini = aggiungiDistanza(tutti, lat, lng, raggioEffettivo);
       const filtrati = marca === 'Tutte'
         ? vicini
         : marca === 'Altro'
           ? vicini.filter(d => !['Agip Eni', 'IP', 'Q8', 'Shell', 'TotalEnergies', 'Tamoil', 'Esso'].some(m => d.bandiera.toLowerCase().includes(m.toLowerCase())))
           : vicini.filter(d => d.bandiera.toLowerCase().includes(marca.toLowerCase()));
-      const ordinati = sortPerPrezzo(filtrati, carburante);
+      const ordinati = sortPerPrezzo(filtrati, carburanteEffettivo);
       setRisultati(ordinati.slice(0, 20));
       setCercato(true);
       const res = await fetch('/data/distributori.json');
@@ -362,10 +364,17 @@ export default function Home() {
                 <button onClick={() => setModalitaRicerca('indirizzo')} style={{ padding: '6px 10px', borderRadius: 5, fontSize: 12, fontWeight: 500, border: 'none', cursor: 'pointer', background: modalitaRicerca === 'indirizzo' ? 'white' : 'transparent', color: modalitaRicerca === 'indirizzo' ? 'var(--text)' : 'var(--muted)', fontFamily: 'inherit' }}>Indirizzo</button>
               </div>
 
+              {/* Carburante compatto */}
+              <div style={{ display: 'flex', gap: 2, background: '#f0efed', borderRadius: 8, padding: 3, flexShrink: 0 }}>
+                {CARBURANTI.map(c => (
+                  <button key={c.value} onClick={() => { setCarburante(c.value); if (userCoords) cerca(userCoords.lat, userCoords.lng, c.value); }} style={{ padding: '6px 10px', borderRadius: 5, fontSize: 12, fontWeight: 500, border: 'none', cursor: 'pointer', background: carburante === c.value ? 'white' : 'transparent', color: carburante === c.value ? 'var(--text)' : 'var(--muted)', fontFamily: 'inherit' }}>{c.label}</button>
+                ))}
+              </div>
+
               {/* Raggio compatto */}
               <div style={{ display: 'flex', gap: 2, background: '#f0efed', borderRadius: 8, padding: 3, flexShrink: 0 }}>
                 {RAGGI.map(r => (
-                  <button key={r} onClick={() => setRaggio(r)} style={{ padding: '6px 10px', borderRadius: 5, fontSize: 12, fontWeight: 500, border: 'none', cursor: 'pointer', background: raggio === r ? 'white' : 'transparent', color: raggio === r ? 'var(--text)' : 'var(--muted)', fontFamily: 'inherit' }}>{r}km</button>
+                  <button key={r} onClick={() => { setRaggio(r); if (userCoords) cerca(userCoords.lat, userCoords.lng, undefined, r); }} style={{ padding: '6px 10px', borderRadius: 5, fontSize: 12, fontWeight: 500, border: 'none', cursor: 'pointer', background: raggio === r ? 'white' : 'transparent', color: raggio === r ? 'var(--text)' : 'var(--muted)', fontFamily: 'inherit' }}>{r}km</button>
                 ))}
               </div>
             </div>
