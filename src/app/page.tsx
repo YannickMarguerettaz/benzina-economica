@@ -131,10 +131,10 @@ export default function Home() {
       {!cercato && (
         <section className="hero-section" style={{ background: 'var(--text)', color: 'white', padding: '64px 32px 80px' }}>
           <div style={{ maxWidth: 680, margin: '0 auto', textAlign: 'center' }}>
-            <h2 style={{ fontSize: 'clamp(28px, 5vw, 48px)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-1.5px', margin: '0 0 12px' }}>
+            <h1 style={{ fontSize: 'clamp(28px, 5vw, 48px)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-1.5px', margin: '0 0 12px' }}>
               Trova il carburante<br />
               <span style={{ fontWeight: 700 }}>più economico vicino a te</span>
-            </h2>
+            </h1>
             <p style={{ fontSize: 15, opacity: 0.5, marginTop: 16, lineHeight: 1.7, marginBottom: 40 }}>
               Niente registrazione, niente app. Dati aggiornati ogni giorno.
             </p>
@@ -468,6 +468,49 @@ export default function Home() {
               <div style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.6 }}>
                 I prezzi provengono dal Ministero delle Imprese e del Made in Italy. Aggiornati automaticamente ogni notte alle 03:00.
               </div>
+            </div>
+          </div>
+
+          {/* Sezione SEO */}
+          <div style={{ marginTop: 56, borderTop: '1px solid var(--border)', paddingTop: 48 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48 }} className="seo-grid">
+
+              <div>
+                <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, letterSpacing: '-0.4px' }}>
+                  Prezzi benzina e diesel aggiornati ogni giorno
+                </h2>
+                <p style={{ fontSize: 15, color: 'var(--muted)', lineHeight: 1.8, margin: 0 }}>
+                  TrovaCarburante raccoglie ogni notte i prezzi di oltre 21.000 distributori italiani direttamente dal Ministero delle Imprese e del Made in Italy (MISE). I dati sono pubblici, gratuiti e aggiornati quotidianamente dai gestori degli impianti. Niente intermediari, niente stime: trovi sempre i prezzi reali praticati in quel momento.
+                </p>
+              </div>
+
+              <div>
+                <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, letterSpacing: '-0.4px' }}>
+                  Quanto puoi risparmiare sul carburante?
+                </h2>
+                <p style={{ fontSize: 15, color: 'var(--muted)', lineHeight: 1.8, margin: 0 }}>
+                  La differenza di prezzo tra il distributore più economico e quello più caro nella stessa città può superare i 15-20 centesimi al litro. Con un pieno da 50 litri significa fino a 10€ di risparmio ogni volta. TrovaCarburante ti mostra in pochi secondi quale stazione fa al caso tuo, ordinata per prezzo e distanza.
+                </p>
+              </div>
+
+              <div>
+                <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, letterSpacing: '-0.4px' }}>
+                  Benzina, diesel, GPL e metano
+                </h2>
+                <p style={{ fontSize: 15, color: 'var(--muted)', lineHeight: 1.8, margin: 0 }}>
+                  Il confronto funziona per tutti i tipi di carburante: benzina, gasolio (diesel), GPL e metano. Puoi filtrare per tipologia e trovare il distributore più conveniente in base al tuo veicolo. I prezzi mostrati includono sia il servito che il self service.
+                </p>
+              </div>
+
+              <div>
+                <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, letterSpacing: '-0.4px' }}>
+                  Come funziona la ricerca per posizione
+                </h2>
+                <p style={{ fontSize: 15, color: 'var(--muted)', lineHeight: 1.8, margin: 0 }}>
+                  Puoi cercare i distributori vicini usando il GPS del tuo dispositivo oppure inserendo un indirizzo o una città. Scegli il raggio di ricerca da 2 a 20 km e ottieni subito la lista ordinata dal più economico. Nessuna registrazione richiesta, nessuna app da scaricare.
+                </p>
+              </div>
+
             </div>
           </div>
         </div>
