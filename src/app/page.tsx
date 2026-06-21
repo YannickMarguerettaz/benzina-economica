@@ -575,73 +575,26 @@ export default function Home() {
         </div>
       )}
 
-      {/* Link interni province */}
-      <div style={{ borderTop: '1px solid var(--border)', background: 'var(--surface)' }}>
-        <div style={{ maxWidth: 900, margin: '0 auto', padding: '40px 32px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 20 }}>
-            <p style={{ fontSize: 11, letterSpacing: '2.5px', textTransform: 'uppercase', color: 'var(--muted)', margin: 0 }}>
-              Prezzi benzina per provincia
-            </p>
-            <a href="/province" style={{ fontSize: 13, color: 'var(--green)', textDecoration: 'none', fontWeight: 500 }}>
-              Vedi tutte le province →
-            </a>
-          </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {[
-              { nome: 'Roma', slug: 'roma' },
-              { nome: 'Milano', slug: 'milano' },
-              { nome: 'Napoli', slug: 'napoli' },
-              { nome: 'Torino', slug: 'torino' },
-              { nome: 'Palermo', slug: 'palermo' },
-              { nome: 'Genova', slug: 'genova' },
-              { nome: 'Bologna', slug: 'bologna' },
-              { nome: 'Firenze', slug: 'firenze' },
-              { nome: 'Bari', slug: 'bari' },
-              { nome: 'Catania', slug: 'catania' },
-              { nome: 'Venezia', slug: 'venezia' },
-              { nome: 'Verona', slug: 'verona' },
-              { nome: 'Messina', slug: 'messina' },
-              { nome: 'Padova', slug: 'padova' },
-              { nome: 'Trieste', slug: 'trieste' },
-              { nome: 'Brescia', slug: 'brescia' },
-              { nome: 'Taranto', slug: 'taranto' },
-              { nome: 'Prato', slug: 'prato' },
-              { nome: 'Reggio Calabria', slug: 'reggio-calabria' },
-              { nome: 'Modena', slug: 'modena' },
-              { nome: 'Parma', slug: 'parma' },
-              { nome: 'Perugia', slug: 'perugia' },
-              { nome: 'Ravenna', slug: 'ravenna' },
-              { nome: 'Livorno', slug: 'livorno' },
-              { nome: 'Cagliari', slug: 'cagliari' },
-              { nome: 'Foggia', slug: 'foggia' },
-              { nome: 'Salerno', slug: 'salerno' },
-              { nome: 'Rimini', slug: 'rimini' },
-              { nome: 'Ferrara', slug: 'ferrara' },
-              { nome: 'Sassari', slug: 'sassari' },
-            ].map((p) => (
-              <a
-                key={p.slug}
-                href={`/${p.slug}`}
-                style={{
-                  fontSize: 13,
-                  padding: '6px 14px',
-                  border: '1px solid var(--border)',
-                  borderRadius: 20,
-                  color: 'var(--text)',
-                  textDecoration: 'none',
-                  background: 'var(--bg)',
-                  fontWeight: 500,
-                }}
-              >
-                {p.nome}
-              </a>
-            ))}
-          </div>
+      <footer style={{ borderTop: '1px solid var(--border)', padding: '20px 32px', textAlign: 'center' }}>
+        <div style={{ marginBottom: 12 }}>
+          <a href="/province" style={{ fontSize: 13, color: 'var(--green)', textDecoration: 'none', fontWeight: 600 }}>
+            Prezzi benzina per provincia →
+          </a>
         </div>
-      </div>
-
-      <footer style={{ borderTop: '1px solid var(--border)', padding: '24px 32px', textAlign: 'center' }}>
-        <p style={{ fontSize: 13, color: 'var(--muted)' }}>TrovaCarburante · Dati MISE · Aggiornati ogni notte</p>
+        <div style={{ display: 'flex', gap: 20, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 16 }}>
+          {[
+            { nome: 'Roma', slug: 'roma' },
+            { nome: 'Milano', slug: 'milano' },
+            { nome: 'Napoli', slug: 'napoli' },
+            { nome: 'Torino', slug: 'torino' },
+            { nome: 'Bologna', slug: 'bologna' },
+          ].map((p) => (
+            <a key={p.slug} href={`/${p.slug}`} style={{ fontSize: 13, color: 'var(--muted)', textDecoration: 'none' }}>
+              {p.nome}
+            </a>
+          ))}
+        </div>
+        <p style={{ fontSize: 12, color: 'var(--muted)', margin: 0 }}>TrovaCarburante · Dati MISE · Aggiornati ogni notte</p>
       </footer>
     </div>
   );
