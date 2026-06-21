@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import DistributoreCard from '@/components/DistributoreCard';
 import { Distributore, Carburante } from '@/lib/types';
@@ -29,6 +29,78 @@ const TABS: { value: Carburante; label: string }[] = [
   { value: 'gpl', label: 'GPL' },
   { value: 'metano', label: 'Metano' },
 ];
+
+function FaqItem({ domanda, risposta }: { domanda: string; risposta: React.ReactNode }) {
+  const [aperta, setAperta] = useState(false);
+  return (
+    <div style={{ borderTop: '1px solid var(--border)' }}>
+      <button
+        onClick={() => setAperta(!aperta)}
+        style={{
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '16px 0',
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          fontFamily: 'inherit',
+          textAlign: 'left',
+          gap: 16,
+        }}
+      >
+        <span style={{ fontWeight: 600, fontSize: 15, color: 'var(--text)', lineHeight: 1.4 }}>{domanda}</span>
+        <span style={{ fontSize: 18, color: 'var(--muted)', flexShrink: 0, transform: aperta ? 'rotate(45deg)' : 'none', transition: 'transform 0.2s' }}>+</span>
+      </button>
+      {aperta && (
+        <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.7, paddingBottom: 16, margin: 0 }}>
+          {risposta}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function FaqSection({ prov, diffCentesimi, risparmio, risparmioAnnuale }: {
+  prov: Provincia;
+  diffCentesimi: string | null;
+  risparmio: string | null;
+  risparmioAnnuale: number | null;
+}) {
+  return (
+    <div style={{ maxWidth: 900, margin: '0 auto', padding: '48px 32px 0' }}>
+      <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 8, letterSpacing: '-0.4px' }}>
+        Domande frequenti su benzina e carburante a {prov.nome}
+      </h2>
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        {prov.media_benzina && (
+          <FaqItem
+            domanda={`Qual è il prezzo medio della benzina a ${prov.nome}?`}
+            risposta={<>Oggi a {prov.nome} il prezzo medio della benzina è <strong>{prov.media_benzina.toFixed(3)}€/L</strong>{prov.min_benzina && prov.max_benzina && <>, con un minimo di {prov.min_benzina.toFixed(3)}€/L e un massimo di {prov.max_benzina.toFixed(3)}€/L tra i {prov.totale_distributori} distributori monitorati.</>}</>}
+          />
+        )}
+        {prov.min_benzina && (
+          <FaqItem
+            domanda={`Dove trovo la benzina più economica a ${prov.nome}?`}
+            risposta={<>Il distributore più economico a {prov.nome} pratica <strong>{prov.min_benzina.toFixed(3)}€/L</strong>. Puoi vedere tutti i distributori ordinati per prezzo nella tabella sopra.</>}
+          />
+        )}
+        {risparmio && risparmioAnnuale && (
+          <FaqItem
+            domanda={`Quanto risparmio scegliendo il distributore più economico a ${prov.nome}?`}
+            risposta={<>La differenza tra il distributore più economico e quello più caro a {prov.nome} è di <strong>{diffCentesimi} centesimi al litro</strong>. Su un pieno da 50 litri sono circa <strong>{risparmio}€</strong>. In un anno, facendo il pieno ogni 2-3 settimane, il risparmio può arrivare a <strong>~{risparmioAnnuale}€</strong>.</>}
+          />
+        )}
+        <FaqItem
+          domanda={`Con quale frequenza vengono aggiornati i prezzi a ${prov.nome}?`}
+          risposta="I prezzi vengono aggiornati ogni notte alle 03:00 con i dati ufficiali del Ministero delle Imprese e del Made in Italy (MISE). I gestori degli impianti sono obbligati per legge a comunicare le variazioni di prezzo entro poche ore."
+        />
+        <div style={{ borderTop: '1px solid var(--border)' }} />
+      </div>
+    </div>
+  );
+}
 
 export default function ProvinciaClient({ prov, distributori }: Props) {
   const [tab, setTab] = useState<Carburante>('benzina');
@@ -306,59 +378,7 @@ export default function ProvinciaClient({ prov, distributori }: Props) {
       </div>
 
       {/* FAQ */}
-      <div style={{ maxWidth: 900, margin: '0 auto', padding: '48px 32px 0' }}>
-        <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 24, letterSpacing: '-0.4px' }}>
-          Domande frequenti su benzina e carburante a {prov.nome}
-        </h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-
-          {prov.media_benzina && (
-            <div style={{ borderTop: '1px solid var(--border)', paddingTop: 16 }}>
-              <p style={{ fontWeight: 600, fontSize: 15, marginBottom: 6 }}>
-                Qual è il prezzo medio della benzina a {prov.nome}?
-              </p>
-              <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.7 }}>
-                Oggi a {prov.nome} il prezzo medio della benzina è <strong>{prov.media_benzina.toFixed(3)}€/L</strong>
-                {prov.min_benzina && prov.max_benzina && (
-                  <>, con un minimo di {prov.min_benzina.toFixed(3)}€/L e un massimo di {prov.max_benzina.toFixed(3)}€/L tra i {prov.totale_distributori} distributori monitorati.</>
-                )}
-              </p>
-            </div>
-          )}
-
-          {prov.min_benzina && (
-            <div style={{ borderTop: '1px solid var(--border)', paddingTop: 16 }}>
-              <p style={{ fontWeight: 600, fontSize: 15, marginBottom: 6 }}>
-                Dove trovo la benzina più economica a {prov.nome}?
-              </p>
-              <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.7 }}>
-                Il distributore più economico a {prov.nome} pratica <strong>{prov.min_benzina.toFixed(3)}€/L</strong>. Puoi vedere tutti i distributori ordinati per prezzo nella tabella sopra.
-              </p>
-            </div>
-          )}
-
-          {risparmio && risparmioAnnuale && (
-            <div style={{ borderTop: '1px solid var(--border)', paddingTop: 16 }}>
-              <p style={{ fontWeight: 600, fontSize: 15, marginBottom: 6 }}>
-                Quanto risparmio scegliendo il distributore più economico a {prov.nome}?
-              </p>
-              <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.7 }}>
-                La differenza tra il distributore più economico e quello più caro a {prov.nome} è di <strong>{diffCentesimi} centesimi al litro</strong>. Su un pieno da 50 litri sono circa <strong>{risparmio}€</strong>. In un anno, facendo il pieno ogni 2-3 settimane, il risparmio può arrivare a <strong>~{risparmioAnnuale}€</strong>.
-              </p>
-            </div>
-          )}
-
-          <div style={{ borderTop: '1px solid var(--border)', paddingTop: 16 }}>
-            <p style={{ fontWeight: 600, fontSize: 15, marginBottom: 6 }}>
-              Con quale frequenza vengono aggiornati i prezzi a {prov.nome}?
-            </p>
-            <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.7 }}>
-              I prezzi vengono aggiornati ogni notte alle 03:00 con i dati ufficiali del Ministero delle Imprese e del Made in Italy (MISE). I gestori degli impianti sono obbligati per legge a comunicare le variazioni di prezzo entro poche ore.
-            </p>
-          </div>
-
-        </div>
-      </div>
+      <FaqSection prov={prov} diffCentesimi={diffCentesimi} risparmio={risparmio} risparmioAnnuale={risparmioAnnuale} />
 
       <footer style={{ borderTop: '1px solid var(--border)', padding: '24px 32px', textAlign: 'center', marginTop: 48 }}>
         <p style={{ fontSize: 13, color: 'var(--muted)' }}>TrovaCarburante · Dati MISE · Aggiornati ogni notte</p>
