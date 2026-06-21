@@ -40,7 +40,7 @@ export default function ProvinciaClient({ prov, distributori }: Props) {
     .filter(d => d.prezzi[tab])
     .sort((a, b) => (a.prezzi[tab] ?? 99) - (b.prezzi[tab] ?? 99));
 
-  const ordinati = tuttiVisibili ? tuttiOrdinati : tuttiOrdinati.slice(0, 10);
+  const ordinati = tuttiVisibili ? tuttiOrdinati : tuttiOrdinati.slice(0, 5);
 
   return (
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
@@ -238,7 +238,7 @@ export default function ProvinciaClient({ prov, distributori }: Props) {
                 ))}
               </div>
 
-              {!tuttiVisibili && tuttiOrdinati.length > 10 && (
+              {!tuttiVisibili && tuttiOrdinati.length > 5 && (
                 <button
                   onClick={() => setTuttiVisibili(true)}
                   style={{
