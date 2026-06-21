@@ -347,9 +347,9 @@ export default function Home() {
       {cercato && (
         <div className="page-wrapper" style={{ maxWidth: 900, margin: '32px auto 0', padding: '0 32px', position: 'relative', zIndex: 10 }}>
           <div className="main-card" style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16, padding: '16px 20px', boxShadow: '0 4px 32px rgba(0,0,0,0.08)' }}>
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-              {/* Barra ricerca compatta */}
-              <div style={{ flex: 1, minWidth: 200, display: 'flex', gap: 8, background: '#f7f6f3', borderRadius: 10, padding: '4px 4px 4px 14px', alignItems: 'center', border: '1px solid var(--border)' }}>
+            {/* Riga 1: input + aggiorna + toggle GPS/Indirizzo */}
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 8 }}>
+              <div style={{ flex: 1, minWidth: 0, display: 'flex', gap: 8, background: '#f7f6f3', borderRadius: 10, padding: '4px 4px 4px 14px', alignItems: 'center', border: '1px solid var(--border)' }}>
                 {modalitaRicerca === 'indirizzo' ? (
                   <input
                     type="text"
@@ -357,7 +357,7 @@ export default function Home() {
                     value={indirizzo}
                     onChange={(e) => setIndirizzo(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleIndirizzo()}
-                    style={{ flex: 1, border: 'none', background: 'transparent', fontSize: 14, fontFamily: 'inherit', color: 'var(--text)', outline: 'none' }}
+                    style={{ flex: 1, border: 'none', background: 'transparent', fontSize: 14, fontFamily: 'inherit', color: 'var(--text)', outline: 'none', minWidth: 0 }}
                   />
                 ) : (
                   <span style={{ flex: 1, fontSize: 14, color: 'var(--muted)' }}>Posizione GPS</span>
@@ -370,21 +370,18 @@ export default function Home() {
                   {loading ? '...' : 'Aggiorna'}
                 </button>
               </div>
-
-              {/* Toggle modalità */}
               <div style={{ display: 'flex', gap: 2, background: '#f0efed', borderRadius: 8, padding: 3, flexShrink: 0 }}>
                 <button onClick={() => setModalitaRicerca('gps')} style={{ padding: '6px 10px', borderRadius: 5, fontSize: 12, fontWeight: 500, border: 'none', cursor: 'pointer', background: modalitaRicerca === 'gps' ? 'white' : 'transparent', color: modalitaRicerca === 'gps' ? 'var(--text)' : 'var(--muted)', fontFamily: 'inherit' }}>GPS</button>
                 <button onClick={() => setModalitaRicerca('indirizzo')} style={{ padding: '6px 10px', borderRadius: 5, fontSize: 12, fontWeight: 500, border: 'none', cursor: 'pointer', background: modalitaRicerca === 'indirizzo' ? 'white' : 'transparent', color: modalitaRicerca === 'indirizzo' ? 'var(--text)' : 'var(--muted)', fontFamily: 'inherit' }}>Indirizzo</button>
               </div>
-
-              {/* Carburante compatto */}
+            </div>
+            {/* Riga 2: carburante + raggio */}
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
               <div style={{ display: 'flex', gap: 2, background: '#f0efed', borderRadius: 8, padding: 3, flexShrink: 0 }}>
                 {CARBURANTI.map(c => (
                   <button key={c.value} onClick={() => { setCarburante(c.value); if (userCoords) cerca(userCoords.lat, userCoords.lng, c.value); }} style={{ padding: '6px 10px', borderRadius: 5, fontSize: 12, fontWeight: 500, border: 'none', cursor: 'pointer', background: carburante === c.value ? 'white' : 'transparent', color: carburante === c.value ? 'var(--text)' : 'var(--muted)', fontFamily: 'inherit' }}>{c.label}</button>
                 ))}
               </div>
-
-              {/* Raggio compatto */}
               <div style={{ display: 'flex', gap: 2, background: '#f0efed', borderRadius: 8, padding: 3, flexShrink: 0 }}>
                 {RAGGI.map(r => (
                   <button key={r} onClick={() => { setRaggio(r); if (userCoords) cerca(userCoords.lat, userCoords.lng, undefined, r); }} style={{ padding: '6px 10px', borderRadius: 5, fontSize: 12, fontWeight: 500, border: 'none', cursor: 'pointer', background: raggio === r ? 'white' : 'transparent', color: raggio === r ? 'var(--text)' : 'var(--muted)', fontFamily: 'inherit' }}>{r}km</button>

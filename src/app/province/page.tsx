@@ -112,8 +112,8 @@ export default function PaginaProvince() {
       </div>
 
       {/* Ancore regioni */}
-      <div style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 10 }}>
-        <div style={{ maxWidth: 900, margin: '0 auto', padding: '12px 24px', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+      <div style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)' }}>
+        <div style={{ maxWidth: 900, margin: '0 auto', padding: '12px 24px', display: 'flex', gap: 8, flexWrap: 'wrap', overflowX: 'auto' }}>
           {regioni.map((r) => (
             <a
               key={r}
@@ -148,7 +148,7 @@ export default function PaginaProvince() {
             }, null as number | null);
 
             return (
-              <section key={regione} id={anchor}>
+              <section key={regione} id={anchor} style={{ scrollMarginTop: 80 }}>
                 {/* Intestazione regione */}
                 <div style={{
                   display: 'flex',
