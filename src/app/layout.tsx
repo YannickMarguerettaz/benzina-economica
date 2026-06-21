@@ -4,6 +4,9 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'TrovaCarburante — Trova il distributore più economico vicino a te',
   description: 'Prezzi benzina e diesel aggiornati ogni giorno dal MISE. Trova il distributore più economico vicino a te in Italia.',
+  verification: {
+    google: 'X_uIYJIrw1j4R27GcUt-_X_HBwDs1l2wsP7FARVdEeI',
+  },
   manifest: '/manifest.json',
   icons: {
     icon: '/icon-192.png',
