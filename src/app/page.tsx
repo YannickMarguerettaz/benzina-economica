@@ -179,10 +179,10 @@ export default function Home() {
                 )}
               </button>
             ) : (
-              <div style={{ background: 'white', borderRadius: 14, padding: 8, display: 'flex', gap: 8, boxShadow: '0 8px 40px rgba(0,0,0,0.2)', marginBottom: 16 }}>
+              <div className="search-bar-address" style={{ background: 'white', borderRadius: 14, padding: 8, display: 'flex', gap: 8, boxShadow: '0 8px 40px rgba(0,0,0,0.2)', marginBottom: 16 }}>
                 <input
                   type="text"
-                  placeholder="Es. Via Roma 1, Milano o solo la città..."
+                  placeholder="Città o indirizzo..."
                   value={indirizzo}
                   onChange={(e) => setIndirizzo(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleIndirizzo()}
@@ -196,13 +196,14 @@ export default function Home() {
                     background: 'transparent',
                     color: 'var(--text)',
                     outline: 'none',
+                    minWidth: 0,
                   }}
                 />
                 <button
                   onClick={handleIndirizzo}
                   disabled={loading}
                   style={{
-                    padding: '14px 28px',
+                    padding: '14px 24px',
                     background: loading ? '#555' : 'var(--green)',
                     color: 'white',
                     border: 'none',
@@ -213,23 +214,18 @@ export default function Home() {
                     fontFamily: 'inherit',
                     display: 'flex',
                     alignItems: 'center',
+                    justifyContent: 'center',
                     gap: 8,
                     flexShrink: 0,
                     transition: 'background 0.2s',
+                    width: '100%',
                   }}
                 >
                   {loading ? (
                     <svg style={{ animation: 'spin 0.8s linear infinite' }} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4" />
                     </svg>
-                  ) : (
-                    <>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
-                      </svg>
-                      Cerca
-                    </>
-                  )}
+                  ) : 'Cerca'}
                 </button>
               </div>
             )}
@@ -242,7 +238,7 @@ export default function Home() {
                 background: modalitaRicerca === 'gps' ? 'rgba(255,255,255,0.15)' : 'transparent',
                 color: 'white', cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
               }}>
-                📍 Usa la mia posizione
+                Usa la mia posizione
               </button>
               <button onClick={() => setModalitaRicerca('indirizzo')} style={{
                 padding: '6px 16px', borderRadius: 20, fontSize: 13, fontWeight: 500,
@@ -250,7 +246,7 @@ export default function Home() {
                 background: modalitaRicerca === 'indirizzo' ? 'rgba(255,255,255,0.15)' : 'transparent',
                 color: 'white', cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
               }}>
-                🔍 Cerca per indirizzo
+                Cerca per indirizzo
               </button>
             </div>
 
@@ -349,7 +345,7 @@ export default function Home() {
                     style={{ flex: 1, border: 'none', background: 'transparent', fontSize: 14, fontFamily: 'inherit', color: 'var(--text)', outline: 'none' }}
                   />
                 ) : (
-                  <span style={{ flex: 1, fontSize: 14, color: 'var(--muted)' }}>📍 Posizione GPS</span>
+                  <span style={{ flex: 1, fontSize: 14, color: 'var(--muted)' }}>Posizione GPS</span>
                 )}
                 <button
                   onClick={modalitaRicerca === 'gps' ? handleGps : handleIndirizzo}
@@ -362,8 +358,8 @@ export default function Home() {
 
               {/* Toggle modalità */}
               <div style={{ display: 'flex', gap: 2, background: '#f0efed', borderRadius: 8, padding: 3, flexShrink: 0 }}>
-                <button onClick={() => setModalitaRicerca('gps')} style={{ padding: '6px 10px', borderRadius: 5, fontSize: 12, fontWeight: 500, border: 'none', cursor: 'pointer', background: modalitaRicerca === 'gps' ? 'white' : 'transparent', color: modalitaRicerca === 'gps' ? 'var(--text)' : 'var(--muted)', fontFamily: 'inherit' }}>📍 GPS</button>
-                <button onClick={() => setModalitaRicerca('indirizzo')} style={{ padding: '6px 10px', borderRadius: 5, fontSize: 12, fontWeight: 500, border: 'none', cursor: 'pointer', background: modalitaRicerca === 'indirizzo' ? 'white' : 'transparent', color: modalitaRicerca === 'indirizzo' ? 'var(--text)' : 'var(--muted)', fontFamily: 'inherit' }}>🔍 Indirizzo</button>
+                <button onClick={() => setModalitaRicerca('gps')} style={{ padding: '6px 10px', borderRadius: 5, fontSize: 12, fontWeight: 500, border: 'none', cursor: 'pointer', background: modalitaRicerca === 'gps' ? 'white' : 'transparent', color: modalitaRicerca === 'gps' ? 'var(--text)' : 'var(--muted)', fontFamily: 'inherit' }}>GPS</button>
+                <button onClick={() => setModalitaRicerca('indirizzo')} style={{ padding: '6px 10px', borderRadius: 5, fontSize: 12, fontWeight: 500, border: 'none', cursor: 'pointer', background: modalitaRicerca === 'indirizzo' ? 'white' : 'transparent', color: modalitaRicerca === 'indirizzo' ? 'var(--text)' : 'var(--muted)', fontFamily: 'inherit' }}>Indirizzo</button>
               </div>
 
               {/* Raggio compatto */}

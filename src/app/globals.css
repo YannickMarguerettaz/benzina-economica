@@ -55,6 +55,14 @@ body {
 }
 
 @media (max-width: 600px) {
+  .search-bar-address {
+    flex-direction: column;
+  }
+
+  .search-bar-address button {
+    width: 100%;
+  }
+
   .steps-grid {
     grid-template-columns: 1fr;
   }
