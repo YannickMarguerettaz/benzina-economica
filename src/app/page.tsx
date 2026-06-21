@@ -488,9 +488,16 @@ export default function Home() {
                 <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, letterSpacing: '-0.4px' }}>
                   Quanto puoi risparmiare sul carburante?
                 </h2>
-                <p style={{ fontSize: 15, color: 'var(--muted)', lineHeight: 1.8, margin: 0 }}>
-                  La differenza di prezzo tra il distributore più economico e quello più caro nella stessa città può superare i 15-20 centesimi al litro. Con un pieno da 50 litri significa fino a 10€ di risparmio ogni volta. TrovaCarburante ti mostra in pochi secondi quale stazione fa al caso tuo, ordinata per prezzo e distanza.
+                <p style={{ fontSize: 15, color: 'var(--muted)', lineHeight: 1.8, marginBottom: 16 }}>
+                  La differenza di prezzo tra il distributore più economico e quello più caro nella stessa città può superare i 15–20 centesimi al litro. Con un pieno da 50 litri significa fino a 10€ di risparmio ogni volta.
                 </p>
+                <div style={{ background: 'var(--green-bg)', border: '1px solid var(--green-border)', borderRadius: 12, padding: '16px 20px' }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--green)', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 8 }}>Stima risparmio annuale</div>
+                  <div style={{ fontSize: 28, fontWeight: 700, color: 'var(--green)', fontFamily: 'DM Mono, monospace', letterSpacing: '-0.5px' }}>~260€</div>
+                  <div style={{ fontSize: 13, color: 'var(--muted)', marginTop: 6, lineHeight: 1.6 }}>
+                    Basato sull'italiano medio: 11.000 km/anno, consumi 7L/100km, pieno ogni 2 settimane. Scegliendo sempre il distributore più economico nel raggio di 5 km.
+                  </div>
+                </div>
               </div>
 
               <div>
