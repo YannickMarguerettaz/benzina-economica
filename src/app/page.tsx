@@ -1,13 +1,23 @@
 'use client';
 
 import { useState, lazy, Suspense } from 'react';
-import FilterBar from '@/components/FilterBar';
 import DistributoreCard from '@/components/DistributoreCard';
 import { fetchDistributori } from '@/lib/data';
 import { aggiungiDistanza, sortPerPrezzo } from '@/lib/geo';
 import { DistributoreConDistanza, Carburante } from '@/lib/types';
 
 const MappaDistributori = lazy(() => import('@/components/MappaDistributori'));
+
+const CARBURANTI: { value: Carburante; label: string }[] = [
+  { value: 'benzina', label: 'Benzina' },
+  { value: 'diesel', label: 'Diesel' },
+  { value: 'gpl', label: 'GPL' },
+  { value: 'metano', label: 'Metano' },
+];
+
+const RAGGI = [2, 5, 10, 20];
+
+const MARCHE = ['Tutte', 'Agip Eni', 'IP', 'Q8', 'Shell', 'TotalEnergies', 'Tamoil', 'Esso', 'Altro'];
 
 async function geocodifica(indirizzo: string): Promise<{ lat: number; lng: number } | null> {
   const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(indirizzo + ', Italia')}&format=json&limit=1`;
@@ -30,6 +40,7 @@ export default function Home() {
   const [modalitaRicerca, setModalitaRicerca] = useState<'gps' | 'indirizzo'>('gps');
   const [vista, setVista] = useState<'lista' | 'mappa'>('lista');
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [filtriAperti, setFiltriAperti] = useState(false);
 
   const cerca = async (lat: number, lng: number) => {
     setLoading(true);
@@ -84,18 +95,18 @@ export default function Home() {
     await cerca(coords.lat, coords.lng);
   };
 
-  const btnStyle = (active: boolean): React.CSSProperties => ({
-    flex: 1,
-    padding: '8px',
-    borderRadius: 6,
+  const segPill = (active: boolean): React.CSSProperties => ({
+    padding: '6px 14px',
+    borderRadius: 20,
     fontSize: 13,
     fontWeight: 500,
     cursor: 'pointer',
-    border: 'none',
-    background: active ? 'var(--text)' : 'transparent',
+    border: active ? '1px solid var(--text)' : '1px solid var(--border)',
+    background: active ? 'var(--text)' : 'white',
     color: active ? 'white' : 'var(--muted)',
     fontFamily: 'inherit',
     transition: 'all 0.15s',
+    whiteSpace: 'nowrap' as const,
   });
 
   return (
@@ -114,136 +125,235 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Hero */}
+      {/* Hero + Ricerca (solo pre-ricerca) */}
       {!cercato && (
-        <section className="hero-section" style={{ background: 'var(--text)', color: 'white', padding: '64px 32px' }}>
-          <div style={{ maxWidth: 900, margin: '0 auto' }}>
-            <h2 style={{ fontSize: 'clamp(32px, 5vw, 52px)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-1.5px', margin: 0 }}>
+        <section className="hero-section" style={{ background: 'var(--text)', color: 'white', padding: '64px 32px 80px' }}>
+          <div style={{ maxWidth: 680, margin: '0 auto', textAlign: 'center' }}>
+            <h2 style={{ fontSize: 'clamp(28px, 5vw, 48px)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-1.5px', margin: '0 0 12px' }}>
               Trova il carburante<br />
               <span style={{ fontWeight: 700 }}>più economico vicino a te</span>
             </h2>
-            <p style={{ fontSize: 16, opacity: 0.55, marginTop: 20, lineHeight: 1.7, maxWidth: 480 }}>
-              Niente registrazione, niente app da scaricare. Dati aggiornati ogni giorno.
+            <p style={{ fontSize: 15, opacity: 0.5, marginTop: 16, lineHeight: 1.7, marginBottom: 40 }}>
+              Niente registrazione, niente app. Dati aggiornati ogni giorno.
             </p>
+
+            {/* Barra ricerca principale */}
+            <div style={{ background: 'white', borderRadius: 14, padding: 8, display: 'flex', gap: 8, boxShadow: '0 8px 40px rgba(0,0,0,0.2)', marginBottom: 16 }}>
+              {modalitaRicerca === 'indirizzo' ? (
+                <input
+                  type="text"
+                  placeholder="Es. Via Roma 1, Milano o solo la città..."
+                  value={indirizzo}
+                  onChange={(e) => setIndirizzo(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleIndirizzo()}
+                  style={{
+                    flex: 1,
+                    padding: '14px 18px',
+                    border: 'none',
+                    borderRadius: 10,
+                    fontSize: 15,
+                    fontFamily: 'inherit',
+                    background: 'transparent',
+                    color: 'var(--text)',
+                    outline: 'none',
+                  }}
+                />
+              ) : (
+                <div style={{ flex: 1, padding: '14px 18px', fontSize: 15, color: '#aaa', textAlign: 'left' }}>
+                  Ricerca tramite GPS...
+                </div>
+              )}
+              <button
+                onClick={modalitaRicerca === 'gps' ? handleGps : handleIndirizzo}
+                disabled={loading}
+                style={{
+                  padding: '14px 28px',
+                  background: loading ? '#555' : 'var(--green)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: 10,
+                  fontSize: 15,
+                  fontWeight: 600,
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  fontFamily: 'inherit',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  flexShrink: 0,
+                  transition: 'background 0.2s',
+                }}
+              >
+                {loading ? (
+                  <svg style={{ animation: 'spin 0.8s linear infinite' }} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4" />
+                  </svg>
+                ) : modalitaRicerca === 'gps' ? (
+                  <>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
+                    </svg>
+                    Cerca vicino a me
+                  </>
+                ) : (
+                  <>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
+                    </svg>
+                    Cerca
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Toggle GPS / Indirizzo */}
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginBottom: 20 }}>
+              <button onClick={() => setModalitaRicerca('gps')} style={{
+                padding: '6px 16px', borderRadius: 20, fontSize: 13, fontWeight: 500,
+                border: modalitaRicerca === 'gps' ? '1px solid rgba(255,255,255,0.6)' : '1px solid rgba(255,255,255,0.2)',
+                background: modalitaRicerca === 'gps' ? 'rgba(255,255,255,0.15)' : 'transparent',
+                color: 'white', cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
+              }}>
+                📍 Usa la mia posizione
+              </button>
+              <button onClick={() => setModalitaRicerca('indirizzo')} style={{
+                padding: '6px 16px', borderRadius: 20, fontSize: 13, fontWeight: 500,
+                border: modalitaRicerca === 'indirizzo' ? '1px solid rgba(255,255,255,0.6)' : '1px solid rgba(255,255,255,0.2)',
+                background: modalitaRicerca === 'indirizzo' ? 'rgba(255,255,255,0.15)' : 'transparent',
+                color: 'white', cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
+              }}>
+                🔍 Cerca per indirizzo
+              </button>
+            </div>
+
+            {/* Raggio */}
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginBottom: 16, flexWrap: 'wrap' }}>
+              <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', alignSelf: 'center' }}>Raggio:</span>
+              {RAGGI.map(r => (
+                <button key={r} onClick={() => setRaggio(r)} style={{
+                  padding: '5px 14px', borderRadius: 20, fontSize: 13, fontWeight: 500,
+                  border: raggio === r ? '1px solid white' : '1px solid rgba(255,255,255,0.2)',
+                  background: raggio === r ? 'white' : 'transparent',
+                  color: raggio === r ? 'var(--text)' : 'rgba(255,255,255,0.7)',
+                  cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
+                }}>
+                  {r} km
+                </button>
+              ))}
+            </div>
+
+            {/* Filtri avanzati */}
+            <button
+              onClick={() => setFiltriAperti(!filtriAperti)}
+              style={{
+                background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', fontSize: 13,
+                cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center',
+                gap: 6, margin: '0 auto', padding: '4px 8px',
+              }}
+            >
+              Filtri avanzati
+              <span style={{ transition: 'transform 0.2s', display: 'inline-block', transform: filtriAperti ? 'rotate(180deg)' : 'rotate(0deg)' }}>▾</span>
+            </button>
+
+            {filtriAperti && (
+              <div style={{ marginTop: 16, padding: 20, background: 'rgba(255,255,255,0.06)', borderRadius: 12, border: '1px solid rgba(255,255,255,0.1)', textAlign: 'left' }} className="animate-fadeup">
+
+                {/* Carburante */}
+                <div style={{ marginBottom: 16 }}>
+                  <span style={{ fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '1.5px', display: 'block', marginBottom: 10 }}>Carburante</span>
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    {CARBURANTI.map(c => (
+                      <button key={c.value} onClick={() => setCarburante(c.value)} style={{
+                        padding: '6px 14px', borderRadius: 20, fontSize: 13, fontWeight: 500,
+                        border: carburante === c.value ? '1px solid white' : '1px solid rgba(255,255,255,0.2)',
+                        background: carburante === c.value ? 'white' : 'transparent',
+                        color: carburante === c.value ? 'var(--text)' : 'rgba(255,255,255,0.7)',
+                        cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
+                      }}>
+                        {c.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Marca */}
+                <div>
+                  <span style={{ fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '1.5px', display: 'block', marginBottom: 10 }}>Marca</span>
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    {MARCHE.map(m => (
+                      <button key={m} onClick={() => setMarca(m)} style={{
+                        padding: '6px 14px', borderRadius: 20, fontSize: 13, fontWeight: 500,
+                        border: marca === m ? '1px solid white' : '1px solid rgba(255,255,255,0.2)',
+                        background: marca === m ? 'white' : 'transparent',
+                        color: marca === m ? 'var(--text)' : 'rgba(255,255,255,0.7)',
+                        cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
+                      }}>
+                        {m}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {errore && (
+              <div style={{ marginTop: 16, padding: '10px 14px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 8, fontSize: 13, color: '#dc2626' }}>
+                {errore}
+              </div>
+            )}
           </div>
         </section>
       )}
 
-      {/* Card cerca */}
-      <div className="page-wrapper" style={{ maxWidth: 900, margin: cercato ? '32px auto 0' : '-28px auto 0', padding: '0 32px', position: 'relative', zIndex: 10 }}>
-        <div className="main-card" style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16, padding: 28, boxShadow: '0 4px 32px rgba(0,0,0,0.08)' }}>
+      {/* Card cerca post-ricerca (compatta) */}
+      {cercato && (
+        <div className="page-wrapper" style={{ maxWidth: 900, margin: '32px auto 0', padding: '0 32px', position: 'relative', zIndex: 10 }}>
+          <div className="main-card" style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16, padding: '16px 20px', boxShadow: '0 4px 32px rgba(0,0,0,0.08)' }}>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+              {/* Barra ricerca compatta */}
+              <div style={{ flex: 1, minWidth: 200, display: 'flex', gap: 8, background: '#f7f6f3', borderRadius: 10, padding: '4px 4px 4px 14px', alignItems: 'center', border: '1px solid var(--border)' }}>
+                {modalitaRicerca === 'indirizzo' ? (
+                  <input
+                    type="text"
+                    placeholder="Indirizzo o città..."
+                    value={indirizzo}
+                    onChange={(e) => setIndirizzo(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleIndirizzo()}
+                    style={{ flex: 1, border: 'none', background: 'transparent', fontSize: 14, fontFamily: 'inherit', color: 'var(--text)', outline: 'none' }}
+                  />
+                ) : (
+                  <span style={{ flex: 1, fontSize: 14, color: 'var(--muted)' }}>📍 Posizione GPS</span>
+                )}
+                <button
+                  onClick={modalitaRicerca === 'gps' ? handleGps : handleIndirizzo}
+                  disabled={loading}
+                  style={{ padding: '8px 16px', background: 'var(--green)', color: 'white', border: 'none', borderRadius: 7, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', flexShrink: 0 }}
+                >
+                  {loading ? '...' : 'Aggiorna'}
+                </button>
+              </div>
 
-          <FilterBar
-            carburante={carburante}
-            raggio={raggio}
-            marca={marca}
-            onCarburanteChange={setCarburante}
-            onRaggioChange={setRaggio}
-            onMarcaChange={setMarca}
-          />
+              {/* Toggle modalità */}
+              <div style={{ display: 'flex', gap: 2, background: '#f0efed', borderRadius: 8, padding: 3, flexShrink: 0 }}>
+                <button onClick={() => setModalitaRicerca('gps')} style={{ padding: '6px 10px', borderRadius: 5, fontSize: 12, fontWeight: 500, border: 'none', cursor: 'pointer', background: modalitaRicerca === 'gps' ? 'white' : 'transparent', color: modalitaRicerca === 'gps' ? 'var(--text)' : 'var(--muted)', fontFamily: 'inherit' }}>📍 GPS</button>
+                <button onClick={() => setModalitaRicerca('indirizzo')} style={{ padding: '6px 10px', borderRadius: 5, fontSize: 12, fontWeight: 500, border: 'none', cursor: 'pointer', background: modalitaRicerca === 'indirizzo' ? 'white' : 'transparent', color: modalitaRicerca === 'indirizzo' ? 'var(--text)' : 'var(--muted)', fontFamily: 'inherit' }}>🔍 Indirizzo</button>
+              </div>
 
-          {/* Toggle GPS / Indirizzo */}
-          <div style={{ marginTop: 16, display: 'flex', gap: 2, background: '#f0efed', borderRadius: 8, padding: 3 }}>
-            <button onClick={() => setModalitaRicerca('gps')} style={btnStyle(modalitaRicerca === 'gps')}>
-              Usa la mia posizione
-            </button>
-            <button onClick={() => setModalitaRicerca('indirizzo')} style={btnStyle(modalitaRicerca === 'indirizzo')}>
-              Cerca per indirizzo
-            </button>
+              {/* Raggio compatto */}
+              <div style={{ display: 'flex', gap: 2, background: '#f0efed', borderRadius: 8, padding: 3, flexShrink: 0 }}>
+                {RAGGI.map(r => (
+                  <button key={r} onClick={() => setRaggio(r)} style={{ padding: '6px 10px', borderRadius: 5, fontSize: 12, fontWeight: 500, border: 'none', cursor: 'pointer', background: raggio === r ? 'white' : 'transparent', color: raggio === r ? 'var(--text)' : 'var(--muted)', fontFamily: 'inherit' }}>{r}km</button>
+                ))}
+              </div>
+            </div>
+
+            {errore && (
+              <div style={{ marginTop: 10, padding: '8px 12px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 8, fontSize: 13, color: '#dc2626' }}>
+                {errore}
+              </div>
+            )}
           </div>
-
-          {/* Input indirizzo */}
-          {modalitaRicerca === 'indirizzo' && (
-            <div style={{ marginTop: 10, display: 'flex', gap: 8 }}>
-              <input
-                type="text"
-                placeholder="Es. Via Roma 1, Milano"
-                value={indirizzo}
-                onChange={(e) => setIndirizzo(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleIndirizzo()}
-                style={{
-                  flex: 1,
-                  padding: '10px 14px',
-                  border: '1px solid var(--border)',
-                  borderRadius: 8,
-                  fontSize: 14,
-                  fontFamily: 'inherit',
-                  background: 'white',
-                  color: 'var(--text)',
-                  outline: 'none',
-                }}
-              />
-              <button
-                onClick={handleIndirizzo}
-                disabled={loading}
-                style={{
-                  padding: '10px 16px',
-                  background: 'var(--text)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: 8,
-                  fontSize: 13,
-                  fontWeight: 500,
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  fontFamily: 'inherit',
-                  flexShrink: 0,
-                }}
-              >
-                Cerca
-              </button>
-            </div>
-          )}
-
-          {/* Bottone GPS */}
-          {modalitaRicerca === 'gps' && (
-            <button
-              onClick={handleGps}
-              disabled={loading}
-              style={{
-                marginTop: 10,
-                width: '100%',
-                padding: '12px 20px',
-                background: loading ? '#555' : 'var(--text)',
-                color: 'white',
-                border: 'none',
-                borderRadius: 8,
-                fontSize: 14,
-                fontWeight: 500,
-                cursor: loading ? 'not-allowed' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 8,
-                fontFamily: 'inherit',
-                transition: 'background 0.2s',
-              }}
-            >
-              {loading ? (
-                <>
-                  <svg style={{ animation: 'spin 0.8s linear infinite' }} width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4" />
-                  </svg>
-                  Ricerca in corso...
-                </>
-              ) : (
-                <>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <circle cx="12" cy="12" r="3" />
-                    <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
-                  </svg>
-                  Rileva posizione
-                </>
-              )}
-            </button>
-          )}
-
-          {errore && (
-            <div style={{ marginTop: 12, padding: '10px 14px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 8, fontSize: 13, color: '#dc2626' }}>
-              {errore}
-            </div>
-          )}
         </div>
-      </div>
+      )}
 
       {/* Risultati */}
       {cercato && (
@@ -255,31 +365,13 @@ export default function Home() {
             </div>
           ) : (
             <>
-              {/* Header risultati + toggle vista */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                 <span style={{ fontSize: 12, color: 'var(--muted)', fontWeight: 500, letterSpacing: '1px', textTransform: 'uppercase' }}>
-                  {risultati.length} risultati
+                  {risultati.length} risultati · {carburante} · {raggio} km
                 </span>
                 <div style={{ display: 'flex', gap: 2, background: '#f0efed', borderRadius: 7, padding: 2 }}>
                   {(['lista', 'mappa'] as const).map((v) => (
-                    <button
-                      key={v}
-                      onClick={() => setVista(v)}
-                      style={{
-                        padding: '5px 12px',
-                        borderRadius: 5,
-                        fontSize: 12,
-                        fontWeight: 500,
-                        border: 'none',
-                        cursor: 'pointer',
-                        background: vista === v ? 'white' : 'transparent',
-                        color: vista === v ? 'var(--text)' : 'var(--muted)',
-                        boxShadow: vista === v ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
-                        fontFamily: 'inherit',
-                        transition: 'all 0.15s',
-                        textTransform: 'capitalize',
-                      }}
-                    >
+                    <button key={v} onClick={() => setVista(v)} style={{ padding: '5px 12px', borderRadius: 5, fontSize: 12, fontWeight: 500, border: 'none', cursor: 'pointer', background: vista === v ? 'white' : 'transparent', color: vista === v ? 'var(--text)' : 'var(--muted)', boxShadow: vista === v ? '0 1px 4px rgba(0,0,0,0.08)' : 'none', fontFamily: 'inherit', transition: 'all 0.15s' }}>
                       {v === 'lista' ? '≡ Lista' : '◎ Mappa'}
                     </button>
                   ))}
@@ -288,13 +380,10 @@ export default function Home() {
 
               {aggiornato && (
                 <div style={{ marginBottom: 12 }}>
-                  <span style={{ fontSize: 12, color: 'var(--muted)' }}>
-                    Dati del {new Date(aggiornato).toLocaleDateString('it-IT')}
-                  </span>
+                  <span style={{ fontSize: 12, color: 'var(--muted)' }}>Dati del {new Date(aggiornato).toLocaleDateString('it-IT')}</span>
                 </div>
               )}
 
-              {/* Vista lista */}
               {vista === 'lista' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                   {risultati.map((d, i) => (
@@ -303,19 +392,13 @@ export default function Home() {
                 </div>
               )}
 
-              {/* Vista mappa */}
               {vista === 'mappa' && userCoords && (
                 <Suspense fallback={
                   <div style={{ height: 420, background: '#f0efed', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, color: 'var(--muted)' }}>
                     Caricamento mappa...
                   </div>
                 }>
-                  <MappaDistributori
-                    distributori={risultati}
-                    carburante={carburante}
-                    userLat={userCoords.lat}
-                    userLng={userCoords.lng}
-                  />
+                  <MappaDistributori distributori={risultati} carburante={carburante} userLat={userCoords.lat} userLng={userCoords.lng} />
                 </Suspense>
               )}
             </>
