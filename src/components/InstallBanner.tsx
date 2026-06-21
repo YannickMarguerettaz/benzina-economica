@@ -87,7 +87,7 @@ export default function InstallBanner() {
       <img src="/icon-192.png" alt="" width={44} height={44} style={{ borderRadius: 10, flexShrink: 0 }} />
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 2 }}>TrovaCarburante</div>
-        <div style={{ fontSize: 12, color: '#6b7280' }}>Installala per accedere subito ai prezzi</div>
+        <div style={{ fontSize: 12, color: '#6b7280' }}>Installa per avere sempre il monitoraggio dei prezzi</div>
       </div>
       <button
         onClick={handleInstall}
