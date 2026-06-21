@@ -33,6 +33,25 @@ body {
   to { transform: rotate(360deg); }
 }
 
+@keyframes progressGps {
+  0% { width: 0%; }
+  100% { width: 45%; }
+}
+
+@keyframes progressData {
+  0% { width: 45%; }
+  85% { width: 95%; }
+  100% { width: 95%; }
+}
+
+.progress-bar-gps {
+  animation: progressGps 8s ease-out forwards;
+}
+
+.progress-bar-data {
+  animation: progressData 4s ease-out forwards;
+}
+
 .animate-fadeup { animation: fadeUp 0.4s ease forwards; }
 .animate-fadeup-delay { animation: fadeUp 0.4s ease 0.1s forwards; opacity: 0; }
 .animate-fadeup-delay-2 { animation: fadeUp 0.4s ease 0.2s forwards; opacity: 0; }

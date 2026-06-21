@@ -41,11 +41,13 @@ export default function Home() {
   const [vista, setVista] = useState<'lista' | 'mappa'>('lista');
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [filtriAperti, setFiltriAperti] = useState(false);
+  const [loadingStep, setLoadingStep] = useState<'gps' | 'data' | null>(null);
 
   const cerca = async (lat: number, lng: number, overrideCarburante?: Carburante, overrideRaggio?: number) => {
     const carburanteEffettivo = overrideCarburante ?? carburante;
     const raggioEffettivo = overrideRaggio ?? raggio;
     setLoading(true);
+    setLoadingStep('data');
     setErrore(null);
     setUserCoords({ lat, lng });
     try {
@@ -66,6 +68,7 @@ export default function Home() {
       setErrore('Errore nel caricamento dei dati. Riprova.');
     } finally {
       setLoading(false);
+      setLoadingStep(null);
     }
   };
 
@@ -74,9 +77,12 @@ export default function Home() {
       setErrore('Il tuo browser non supporta la geolocalizzazione');
       return;
     }
+    setLoading(true);
+    setLoadingStep('gps');
+    setErrore(null);
     navigator.geolocation.getCurrentPosition(
       (pos) => cerca(pos.coords.latitude, pos.coords.longitude),
-      () => setErrore('Impossibile rilevare la posizione. Controlla i permessi del browser.'),
+      () => { setErrore('Impossibile rilevare la posizione. Controlla i permessi del browser.'); setLoading(false); setLoadingStep(null); },
       { timeout: 10000, maximumAge: 60000 }
     );
   };
@@ -141,45 +147,53 @@ export default function Home() {
 
             {/* Barra ricerca principale */}
             {modalitaRicerca === 'gps' ? (
-              <button
-                onClick={handleGps}
-                disabled={loading}
-                style={{
-                  width: '100%',
-                  padding: '18px 28px',
-                  background: loading ? '#555' : 'var(--green)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: 14,
-                  fontSize: 16,
-                  fontWeight: 600,
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  fontFamily: 'inherit',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 10,
-                  marginBottom: 16,
-                  boxShadow: '0 8px 40px rgba(0,0,0,0.2)',
-                  transition: 'background 0.2s',
-                }}
-              >
-                {loading ? (
-                  <>
-                    <svg style={{ animation: 'spin 0.8s linear infinite' }} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4" />
-                    </svg>
-                    Ricerca in corso...
-                  </>
-                ) : (
-                  <>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
-                    </svg>
-                    Cerca vicino a me
-                  </>
+              <div style={{ marginBottom: 16 }}>
+                <button
+                  onClick={handleGps}
+                  disabled={loading}
+                  style={{
+                    width: '100%',
+                    padding: '18px 28px',
+                    background: loading ? 'var(--green)' : 'var(--green)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: loading ? '14px 14px 0 0' : 14,
+                    fontSize: 16,
+                    fontWeight: 600,
+                    cursor: loading ? 'not-allowed' : 'pointer',
+                    fontFamily: 'inherit',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 10,
+                    boxShadow: loading ? 'none' : '0 8px 40px rgba(0,0,0,0.2)',
+                    transition: 'box-shadow 0.2s, border-radius 0.2s',
+                    position: 'relative',
+                    overflow: 'hidden',
+                  }}
+                >
+                  {loading ? (
+                    <>
+                      <svg style={{ animation: 'spin 0.8s linear infinite', flexShrink: 0 }} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4" />
+                      </svg>
+                      {loadingStep === 'gps' ? 'Rilevamento posizione...' : 'Caricamento prezzi...'}
+                    </>
+                  ) : (
+                    <>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
+                      </svg>
+                      Cerca vicino a me
+                    </>
+                  )}
+                </button>
+                {loading && (
+                  <div style={{ height: 4, background: 'rgba(26,107,58,0.2)', borderRadius: '0 0 14px 14px', overflow: 'hidden', boxShadow: '0 8px 40px rgba(0,0,0,0.2)' }}>
+                    <div className={loadingStep === 'gps' ? 'progress-bar-gps' : 'progress-bar-data'} style={{ height: '100%', background: 'var(--green)' }} />
+                  </div>
                 )}
-              </button>
+              </div>
             ) : (
               <div className="search-bar-address" style={{ background: 'white', borderRadius: 14, padding: 8, display: 'flex', gap: 8, boxShadow: '0 8px 40px rgba(0,0,0,0.2)', marginBottom: 16 }}>
                 <input
