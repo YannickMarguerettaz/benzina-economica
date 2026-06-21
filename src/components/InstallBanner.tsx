@@ -36,10 +36,17 @@ export default function InstallBanner() {
 
   const handleInstall = async () => {
     if (!prompt) return;
+    (window as Window & { dataLayer?: object[] }).dataLayer = (window as Window & { dataLayer?: object[] }).dataLayer || [];
+    (window as Window & { dataLayer?: object[] }).dataLayer!.push({ event: 'pwa_install_click' });
     await prompt.prompt();
     const { outcome } = await prompt.userChoice;
-    if (outcome === 'accepted') setVisible(false);
-    else { sessionStorage.setItem('pwa-dismissed', '1'); setVisible(false); }
+    if (outcome === 'accepted') {
+      (window as Window & { dataLayer?: object[] }).dataLayer!.push({ event: 'pwa_installed' });
+      setVisible(false);
+    } else {
+      sessionStorage.setItem('pwa-dismissed', '1');
+      setVisible(false);
+    }
   };
 
   const handleDismiss = () => {
