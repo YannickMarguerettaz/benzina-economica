@@ -161,7 +161,7 @@ export default function PaginaProvince() {
                     {regione}
                   </h2>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-                    <span style={{ fontSize: 11, color: 'var(--muted)' }}>media benzina</span>
+                    <span style={{ fontSize: 11, color: 'var(--muted)' }}>più economica</span>
                     {minBenzina && (
                       <span className="font-mono" style={{ fontSize: 16, fontWeight: 500, color: 'var(--green)' }}>
                         {minBenzina.toFixed(3)}€
