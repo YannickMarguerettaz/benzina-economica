@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, lazy, Suspense } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import DistributoreCard from '@/components/DistributoreCard';
 import { fetchDistributori } from '@/lib/data';
 import { aggiungiDistanza, sortPerPrezzo } from '@/lib/geo';
@@ -43,6 +43,19 @@ export default function Home() {
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [filtriAperti, setFiltriAperti] = useState(false);
   const [loadingStep, setLoadingStep] = useState<'gps' | 'data' | null>(null);
+  const [risparmioMedioAnnuale, setRisparmioMedioAnnuale] = useState<number>(260);
+
+  useEffect(() => {
+    fetch('/data/province.json')
+      .then(r => r.json())
+      .then(d => {
+        const province = d.province.filter((p: { min_benzina: number | null; max_benzina: number | null }) => p.min_benzina && p.max_benzina);
+        if (!province.length) return;
+        const avgDiff = province.reduce((s: number, p: { min_benzina: number; max_benzina: number }) => s + (p.max_benzina - p.min_benzina), 0) / province.length;
+        setRisparmioMedioAnnuale(Math.round(avgDiff * 50 * 15));
+      })
+      .catch(() => {});
+  }, []);
 
   const cerca = async (lat: number, lng: number, overrideCarburante?: Carburante, overrideRaggio?: number) => {
     const carburanteEffettivo = overrideCarburante ?? carburante;
@@ -505,7 +518,7 @@ export default function Home() {
               {[
                 { n: '21.000+', label: 'distributori monitorati' },
                 { n: 'ogni notte', label: 'aggiornamento prezzi' },
-                { n: '~260€', label: 'risparmio annuale medio' },
+                { n: `~${risparmioMedioAnnuale}€`, label: 'risparmio annuale medio' },
                 { n: '4', label: 'tipologie di carburante' },
               ].map((s, i) => (
                 <div key={i} style={{
@@ -552,7 +565,7 @@ export default function Home() {
               </div>
               <div style={{ padding: '40px 0 40px 32px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <div style={{ fontFamily: 'DM Mono, monospace', fontSize: 11, color: 'var(--green)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 12 }}>risparmio annuale medio</div>
-                <div style={{ fontFamily: 'DM Mono, monospace', fontSize: 56, fontWeight: 700, color: 'var(--green)', lineHeight: 1, letterSpacing: '-2px' }}>~260€</div>
+                <div style={{ fontFamily: 'DM Mono, monospace', fontSize: 56, fontWeight: 700, color: 'var(--green)', lineHeight: 1, letterSpacing: '-2px' }}>~{risparmioMedioAnnuale}€</div>
                 <div style={{ width: 40, height: 2, background: 'var(--green)', margin: '16px 0' }} />
                 <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.7 }}>
                   11.000 km/anno · 7L/100km<br />
