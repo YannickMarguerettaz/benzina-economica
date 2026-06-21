@@ -472,53 +472,92 @@ export default function Home() {
           </div>
 
           {/* Sezione SEO */}
-          <div style={{ marginTop: 56, borderTop: '1px solid var(--border)', paddingTop: 48 }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48 }} className="seo-grid">
+          <div style={{ marginTop: 64, borderTop: '2px solid var(--text)' }}>
 
-              <div>
-                <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, letterSpacing: '-0.4px' }}>
-                  Prezzi benzina e diesel aggiornati ogni giorno
+            {/* Stat bar */}
+            <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', marginBottom: 0 }} className="stat-bar">
+              {[
+                { n: '21.000+', label: 'distributori monitorati' },
+                { n: 'ogni notte', label: 'aggiornamento prezzi' },
+                { n: '~260€', label: 'risparmio annuale medio' },
+                { n: '4', label: 'tipologie di carburante' },
+              ].map((s, i) => (
+                <div key={i} style={{
+                  flex: 1,
+                  padding: '24px 20px',
+                  borderRight: i < 3 ? '1px solid var(--border)' : 'none',
+                }}>
+                  <div style={{ fontFamily: 'DM Mono, monospace', fontSize: 22, fontWeight: 700, color: 'var(--text)', letterSpacing: '-0.5px', lineHeight: 1 }}>{s.n}</div>
+                  <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 6, textTransform: 'uppercase', letterSpacing: '1px' }}>{s.label}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Blocco 1 — full width editoriale */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', borderBottom: '1px solid var(--border)' }} className="editorial-row">
+              <div style={{ padding: '40px 32px 40px 0', borderRight: '1px solid var(--border)' }}>
+                <div style={{ fontFamily: 'DM Mono, monospace', fontSize: 11, color: 'var(--muted)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 16 }}>01</div>
+                <h2 style={{ fontSize: 26, fontWeight: 700, lineHeight: 1.2, letterSpacing: '-0.6px', margin: 0 }}>
+                  Prezzi reali,<br />aggiornati<br />ogni notte
                 </h2>
-                <p style={{ fontSize: 15, color: 'var(--muted)', lineHeight: 1.8, margin: 0 }}>
+              </div>
+              <div style={{ padding: '40px 0 40px 40px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <p style={{ fontSize: 15, color: 'var(--muted)', lineHeight: 1.9, margin: '0 0 24px' }}>
                   TrovaCarburante raccoglie ogni notte i prezzi di oltre 21.000 distributori italiani direttamente dal Ministero delle Imprese e del Made in Italy (MISE). I dati sono pubblici, gratuiti e aggiornati quotidianamente dai gestori degli impianti. Niente intermediari, niente stime: trovi sempre i prezzi reali praticati in quel momento.
                 </p>
-              </div>
-
-              <div>
-                <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, letterSpacing: '-0.4px' }}>
-                  Quanto puoi risparmiare sul carburante?
-                </h2>
-                <p style={{ fontSize: 15, color: 'var(--muted)', lineHeight: 1.8, marginBottom: 16 }}>
-                  La differenza di prezzo tra il distributore più economico e quello più caro nella stessa città può superare i 15–20 centesimi al litro. Con un pieno da 50 litri significa fino a 10€ di risparmio ogni volta.
-                </p>
-                <div style={{ background: 'var(--green-bg)', border: '1px solid var(--green-border)', borderRadius: 12, padding: '16px 20px' }}>
-                  <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--green)', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 8 }}>Stima risparmio annuale</div>
-                  <div style={{ fontSize: 28, fontWeight: 700, color: 'var(--green)', fontFamily: 'DM Mono, monospace', letterSpacing: '-0.5px' }}>~260€</div>
-                  <div style={{ fontSize: 13, color: 'var(--muted)', marginTop: 6, lineHeight: 1.6 }}>
-                    Basato sull'italiano medio: 11.000 km/anno, consumi 7L/100km, pieno ogni 2 settimane. Scegliendo sempre il distributore più economico nel raggio di 5 km.
-                  </div>
+                <div style={{ display: 'flex', gap: 12 }}>
+                  {['Benzina', 'Diesel', 'GPL', 'Metano'].map(c => (
+                    <div key={c} style={{ padding: '6px 14px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 20, fontSize: 12, fontWeight: 500, color: 'var(--muted)' }}>{c}</div>
+                  ))}
                 </div>
               </div>
-
-              <div>
-                <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, letterSpacing: '-0.4px' }}>
-                  Benzina, diesel, GPL e metano
-                </h2>
-                <p style={{ fontSize: 15, color: 'var(--muted)', lineHeight: 1.8, margin: 0 }}>
-                  Il confronto funziona per tutti i tipi di carburante: benzina, gasolio (diesel), GPL e metano. Puoi filtrare per tipologia e trovare il distributore più conveniente in base al tuo veicolo. I prezzi mostrati includono sia il servito che il self service.
-                </p>
-              </div>
-
-              <div>
-                <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, letterSpacing: '-0.4px' }}>
-                  Come funziona la ricerca per posizione
-                </h2>
-                <p style={{ fontSize: 15, color: 'var(--muted)', lineHeight: 1.8, margin: 0 }}>
-                  Puoi cercare i distributori vicini usando il GPS del tuo dispositivo oppure inserendo un indirizzo o una città. Scegli il raggio di ricerca da 2 a 20 km e ottieni subito la lista ordinata dal più economico. Nessuna registrazione richiesta, nessuna app da scaricare.
-                </p>
-              </div>
-
             </div>
+
+            {/* Blocco 2 — risparmio con numero grande */}
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', borderBottom: '1px solid var(--border)' }} className="editorial-row editorial-row--reverse">
+              <div style={{ padding: '40px 40px 40px 0', borderRight: '1px solid var(--border)' }}>
+                <div style={{ fontFamily: 'DM Mono, monospace', fontSize: 11, color: 'var(--muted)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 16 }}>02</div>
+                <h2 style={{ fontSize: 26, fontWeight: 700, lineHeight: 1.2, letterSpacing: '-0.6px', margin: '0 0 20px' }}>
+                  Quanto puoi risparmiare<br />sul carburante?
+                </h2>
+                <p style={{ fontSize: 15, color: 'var(--muted)', lineHeight: 1.9, margin: 0 }}>
+                  La differenza tra il distributore più economico e quello più caro nella stessa città supera spesso i 15–20 centesimi al litro. Un pieno da 50 litri può costare fino a 10€ in meno. Moltiplicato per i rifornimenti annuali, il risparmio diventa significativo.
+                </p>
+              </div>
+              <div style={{ padding: '40px 0 40px 32px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <div style={{ fontFamily: 'DM Mono, monospace', fontSize: 11, color: 'var(--green)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 12 }}>risparmio annuale medio</div>
+                <div style={{ fontFamily: 'DM Mono, monospace', fontSize: 56, fontWeight: 700, color: 'var(--green)', lineHeight: 1, letterSpacing: '-2px' }}>~260€</div>
+                <div style={{ width: 40, height: 2, background: 'var(--green)', margin: '16px 0' }} />
+                <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.7 }}>
+                  11.000 km/anno · 7L/100km<br />
+                  pieno ogni 2 settimane<br />
+                  distributore più economico a 5 km
+                </div>
+              </div>
+            </div>
+
+            {/* Blocco 3 — due colonne simmetriche */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }} className="seo-grid">
+              <div style={{ padding: '40px 40px 40px 0', borderRight: '1px solid var(--border)' }}>
+                <div style={{ fontFamily: 'DM Mono, monospace', fontSize: 11, color: 'var(--muted)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 16 }}>03</div>
+                <h2 style={{ fontSize: 22, fontWeight: 700, lineHeight: 1.2, letterSpacing: '-0.5px', margin: '0 0 16px' }}>
+                  Benzina, diesel,<br />GPL e metano
+                </h2>
+                <p style={{ fontSize: 15, color: 'var(--muted)', lineHeight: 1.9, margin: 0 }}>
+                  Il confronto funziona per tutti i carburanti. Puoi filtrare per tipologia e trovare il distributore più conveniente in base al tuo veicolo. I prezzi includono sia il servito che il self service.
+                </p>
+              </div>
+              <div style={{ padding: '40px 0 40px 40px' }}>
+                <div style={{ fontFamily: 'DM Mono, monospace', fontSize: 11, color: 'var(--muted)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 16 }}>04</div>
+                <h2 style={{ fontSize: 22, fontWeight: 700, lineHeight: 1.2, letterSpacing: '-0.5px', margin: '0 0 16px' }}>
+                  Ricerca per<br />posizione o indirizzo
+                </h2>
+                <p style={{ fontSize: 15, color: 'var(--muted)', lineHeight: 1.9, margin: 0 }}>
+                  Usa il GPS oppure cerca per indirizzo o città. Scegli il raggio da 2 a 20 km e ottieni la lista ordinata per prezzo. Nessuna registrazione, nessuna app.
+                </p>
+              </div>
+            </div>
+
           </div>
         </div>
       )}

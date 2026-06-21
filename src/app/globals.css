@@ -55,9 +55,47 @@ body {
 }
 
 @media (max-width: 600px) {
+  .stat-bar {
+    flex-wrap: wrap;
+  }
+
+  .stat-bar > div {
+    flex: 1 1 45%;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .editorial-row,
+  .editorial-row--reverse {
+    grid-template-columns: 1fr !important;
+  }
+
+  .editorial-row > div:first-child,
+  .editorial-row--reverse > div:first-child {
+    border-right: none !important;
+    border-bottom: 1px solid var(--border);
+    padding-right: 0 !important;
+  }
+
+  .editorial-row > div:last-child,
+  .editorial-row--reverse > div:last-child {
+    padding-left: 0 !important;
+  }
+
   .seo-grid {
     grid-template-columns: 1fr !important;
     gap: 32px !important;
+  }
+
+  .seo-grid > div:first-child {
+    border-right: none !important;
+    border-bottom: 1px solid var(--border);
+    padding-right: 0 !important;
+    padding-bottom: 32px !important;
+  }
+
+  .seo-grid > div:last-child {
+    padding-left: 0 !important;
   }
 
   .search-bar-address {
