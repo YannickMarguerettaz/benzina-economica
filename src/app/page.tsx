@@ -7,6 +7,7 @@ import { aggiungiDistanza, sortPerPrezzo } from '@/lib/geo';
 import { DistributoreConDistanza, Carburante } from '@/lib/types';
 
 const MappaDistributori = lazy(() => import('@/components/MappaDistributori'));
+const MappaItalia = lazy(() => import('@/components/MappaItalia'));
 
 const CARBURANTI: { value: Carburante; label: string }[] = [
   { value: 'benzina', label: 'Benzina' },
@@ -455,6 +456,13 @@ export default function Home() {
             </>
           )}
         </div>
+      )}
+
+      {/* Mappa province */}
+      {!cercato && (
+        <Suspense fallback={<div style={{ height: 400, background: 'var(--surface)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }} />}>
+          <MappaItalia />
+        </Suspense>
       )}
 
       {/* Come funziona */}

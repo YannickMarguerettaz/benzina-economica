@@ -42,9 +42,9 @@ export default function MappaItalia() {
     .domain([minPrezzo, (minPrezzo + maxPrezzo) / 2, maxPrezzo])
     .range(['#1a6b3a', '#f59e0b', '#dc2626']);
 
-  const getProvinciaByGeo = (geo: { properties: Record<string, string> }): ProvinciaData | undefined => {
-    const sigla = (geo.properties.prov_acr || '').toUpperCase();
-    const nome = (geo.properties.prov_name || '').toLowerCase();
+  const getProvinciaByGeo = (geo: { properties: Record<string, string | number> }): ProvinciaData | undefined => {
+    const sigla = String(geo.properties.prov_acr || '').toUpperCase();
+    const nome = String(geo.properties.prov_name || '').toLowerCase();
     return province.find(
       (p) =>
         p.sigla.toUpperCase() === sigla ||
