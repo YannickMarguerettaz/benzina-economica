@@ -60,21 +60,10 @@ export default function MappaItalia() {
       padding: '48px 32px',
     }}>
       <div style={{ maxWidth: 900, margin: '0 auto' }}>
-        <p style={{
-          fontSize: 11,
-          letterSpacing: '2.5px',
-          textTransform: 'uppercase',
-          color: 'var(--muted)',
-          marginBottom: 8,
-        }}>
+        <p style={{ fontSize: 11, letterSpacing: '2.5px', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 8 }}>
           Prezzi benzina oggi in Italia
         </p>
-        <h2 style={{
-          fontSize: 22,
-          fontWeight: 700,
-          letterSpacing: '-0.5px',
-          margin: '0 0 32px',
-        }}>
+        <h2 style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.5px', margin: '0 0 32px' }}>
           Dove costa meno fare il pieno?
         </h2>
 
@@ -151,20 +140,9 @@ export default function MappaItalia() {
         </div>
 
         {/* Legenda */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 12,
-          marginTop: 20,
-          justifyContent: 'center',
-        }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 20, justifyContent: 'center' }}>
           <span style={{ fontSize: 12, color: 'var(--muted)' }}>€{minPrezzo.toFixed(3)} più economica</span>
-          <div style={{
-            width: 160,
-            height: 6,
-            borderRadius: 3,
-            background: 'linear-gradient(to right, #1a6b3a, #f59e0b, #dc2626)',
-          }} />
+          <div style={{ width: 160, height: 6, borderRadius: 3, background: 'linear-gradient(to right, #1a6b3a, #f59e0b, #dc2626)' }} />
           <span style={{ fontSize: 12, color: 'var(--muted)' }}>€{maxPrezzo.toFixed(3)} più cara</span>
         </div>
       </div>
