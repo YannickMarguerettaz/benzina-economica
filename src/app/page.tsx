@@ -129,7 +129,7 @@ export default function Home() {
             </div>
             <span style={{ fontWeight: 700, fontSize: 17, letterSpacing: '-0.4px', color: 'var(--text)' }}>TrovaCarburante</span>
           </div>
-          <a href="/province" style={{ fontSize: 14, color: 'var(--muted)', textDecoration: 'none', fontWeight: 500 }}>Tutte le province →</a>
+          <a href="/province" style={{ fontSize: 14, color: 'var(--muted)', textDecoration: 'none', fontWeight: 500 }}>Cerca per provincia</a>
         </div>
       </header>
 
