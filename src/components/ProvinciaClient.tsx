@@ -98,13 +98,13 @@ export default function ProvinciaClient({ prov, distributori }: Props) {
           {/* Stat bar */}
           <div style={{ display: 'flex', gap: 0, flexWrap: 'wrap', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: 28 }}>
             {[
-              { label: 'min benzina', value: prov.min_benzina ? `${prov.min_benzina.toFixed(3)}€` : '—', highlight: true },
-              { label: 'media benzina', value: prov.media_benzina ? `${prov.media_benzina.toFixed(3)}€` : '—' },
-              { label: 'min diesel', value: prov.min_diesel ? `${prov.min_diesel.toFixed(3)}€` : '—' },
-              { label: 'risparmio per pieno', value: risparmio ? `~${risparmio}€` : '—' },
+              { label: 'più economico', value: prov.min_benzina ? `${prov.min_benzina.toFixed(3)}€` : '—', color: '#4ade80' },
+              { label: 'più caro', value: prov.max_benzina ? `${prov.max_benzina.toFixed(3)}€` : '—', color: '#f87171' },
+              { label: 'media provincia', value: prov.media_benzina ? `${prov.media_benzina.toFixed(3)}€` : '—', color: '#fff' },
+              { label: 'risparmio annuale', value: risparmioAnnuale ? `~${risparmioAnnuale}€` : '—', color: '#4ade80' },
             ].map((s, i) => (
               <div key={i} style={{ paddingRight: 40, marginRight: 40, borderRight: i < 3 ? '1px solid rgba(255,255,255,0.1)' : 'none', marginBottom: 8 }}>
-                <div style={{ fontFamily: 'DM Mono, monospace', fontSize: 28, fontWeight: 600, color: s.highlight ? '#4ade80' : '#fff', lineHeight: 1, marginBottom: 6 }}>
+                <div style={{ fontFamily: 'DM Mono, monospace', fontSize: 28, fontWeight: 600, color: s.color, lineHeight: 1, marginBottom: 6 }}>
                   {s.value}
                 </div>
                 <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '1.5px' }}>
