@@ -234,7 +234,6 @@ export default function Home() {
                     gap: 8,
                     flexShrink: 0,
                     transition: 'background 0.2s',
-                    width: '100%',
                   }}
                 >
                   {loading ? (
