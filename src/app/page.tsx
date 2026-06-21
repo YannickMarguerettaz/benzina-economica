@@ -296,12 +296,17 @@ export default function Home() {
 
               {/* Vista lista */}
               {vista === 'lista' && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  {risultati.map((d, i) => (
-                    <DistributoreCard key={d.id} distributore={d} carburante={carburante} rank={i} />
-                  ))}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {(() => {
+                    const prezzi = risultati.map(d => d.prezzi[carburante]).filter((p): p is number => p != null);
+                    const prezzoMedio = prezzi.length ? prezzi.reduce((a, b) => a + b, 0) / prezzi.length : undefined;
+                    return risultati.map((d, i) => (
+                      <DistributoreCard key={d.id} distributore={d} carburante={carburante} rank={i} prezzoMedio={prezzoMedio} />
+                    ));
+                  })()}
                 </div>
               )}
+
 
               {/* Vista mappa */}
               {vista === 'mappa' && userCoords && (
