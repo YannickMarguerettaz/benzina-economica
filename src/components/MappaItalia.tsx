@@ -4,11 +4,16 @@ import { useState, useEffect } from 'react';
 import { ComposableMap, Geographies, Geography } from 'react-simple-maps';
 import { scaleLinear } from 'd3-scale';
 
+type CarburanteMappa = 'benzina' | 'diesel' | 'gpl' | 'metano';
+
 interface ProvinciaData {
   sigla: string;
   nome: string;
   slug: string;
   media_benzina: number | null;
+  media_diesel: number | null;
+  media_gpl: number | null;
+  media_metano: number | null;
 }
 
 interface Tooltip {
@@ -21,7 +26,7 @@ interface Tooltip {
 
 const GEO_URL = '/data/province-topo.json';
 
-export default function MappaItalia() {
+export default function MappaItalia({ carburante = 'benzina' }: { carburante?: CarburanteMappa }) {
   const [province, setProvince] = useState<ProvinciaData[]>([]);
   const [tooltip, setTooltip] = useState<Tooltip | null>(null);
 
@@ -31,8 +36,10 @@ export default function MappaItalia() {
       .then((d) => setProvince(d.province));
   }, []);
 
+  const prezzoKey = `media_${carburante}` as keyof ProvinciaData;
+
   const prezzi = province
-    .map((p) => p.media_benzina)
+    .map((p) => p[prezzoKey] as number | null)
     .filter((v): v is number => v !== null);
 
   const minPrezzo = prezzi.length ? Math.min(...prezzi) : 1.7;
@@ -53,17 +60,12 @@ export default function MappaItalia() {
   };
 
   return (
-    <div style={{
-      borderTop: '1px solid var(--border)',
-      borderBottom: '1px solid var(--border)',
-      background: 'var(--surface)',
-      padding: '48px 32px',
-    }}>
+    <div style={{ padding: '24px 32px 48px' }}>
       <div style={{ maxWidth: 900, margin: '0 auto' }}>
         <p style={{ fontSize: 11, letterSpacing: '2.5px', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 8 }}>
-          Prezzi benzina oggi in Italia
+          Prezzi carburante oggi in Italia
         </p>
-        <h2 style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.5px', margin: '0 0 32px' }}>
+        <h2 style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.5px', margin: '0 0 24px' }}>
           Dove costa meno fare il pieno?
         </h2>
 
@@ -79,7 +81,7 @@ export default function MappaItalia() {
               {({ geographies }) =>
                 geographies.map((geo) => {
                   const prov = getProvinciaByGeo(geo);
-                  const prezzo = prov?.media_benzina ?? null;
+                  const prezzo = prov ? (prov[prezzoKey] as number | null) : null;
                   const fill = prezzo ? colorScale(prezzo) : '#e8e6e1';
 
                   return (
