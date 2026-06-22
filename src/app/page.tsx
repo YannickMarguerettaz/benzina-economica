@@ -41,7 +41,7 @@ export default function Home() {
   const [modalitaRicerca, setModalitaRicerca] = useState<'gps' | 'indirizzo'>('gps');
   const [vista, setVista] = useState<'lista' | 'mappa'>('lista');
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
-  const [filtriAperti, setFiltriAperti] = useState(false);
+  const [filtroAperto, setFiltroAperto] = useState<'raggio' | 'marca' | null>(null);
   const [loadingStep, setLoadingStep] = useState<'gps' | 'data' | null>(null);
   const [risparmioMedioAnnuale, setRisparmioMedioAnnuale] = useState<number>(260);
 
@@ -302,57 +302,61 @@ export default function Home() {
               ))}
             </div>
 
-            {/* Filtri avanzati */}
-            <button
-              onClick={() => setFiltriAperti(!filtriAperti)}
-              style={{
-                background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', fontSize: 13,
-                cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center',
-                gap: 6, margin: '0 auto', padding: '4px 8px',
-              }}
-            >
-              Filtri avanzati
-              <span style={{ transition: 'transform 0.2s', display: 'inline-block', transform: filtriAperti ? 'rotate(180deg)' : 'rotate(0deg)' }}>▾</span>
-            </button>
+            {/* Pulsanti filtro */}
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+              <button
+                onClick={() => setFiltroAperto(filtroAperto === 'raggio' ? null : 'raggio')}
+                style={{
+                  padding: '6px 16px', borderRadius: 20, fontSize: 13, fontWeight: 500,
+                  border: filtroAperto === 'raggio' || raggio !== 5 ? '1px solid rgba(255,255,255,0.6)' : '1px solid rgba(255,255,255,0.2)',
+                  background: filtroAperto === 'raggio' || raggio !== 5 ? 'rgba(255,255,255,0.15)' : 'transparent',
+                  color: 'white', cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
+                }}
+              >
+                Raggio · {raggio} km
+              </button>
+              <button
+                onClick={() => setFiltroAperto(filtroAperto === 'marca' ? null : 'marca')}
+                style={{
+                  padding: '6px 16px', borderRadius: 20, fontSize: 13, fontWeight: 500,
+                  border: filtroAperto === 'marca' || marca !== 'Tutte' ? '1px solid rgba(255,255,255,0.6)' : '1px solid rgba(255,255,255,0.2)',
+                  background: filtroAperto === 'marca' || marca !== 'Tutte' ? 'rgba(255,255,255,0.15)' : 'transparent',
+                  color: 'white', cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
+                }}
+              >
+                Marca · {marca}
+              </button>
+            </div>
 
-            {filtriAperti && (
-              <div style={{ marginTop: 16, padding: 20, background: 'rgba(255,255,255,0.06)', borderRadius: 12, border: '1px solid rgba(255,255,255,0.1)', textAlign: 'left' }} className="animate-fadeup">
+            {filtroAperto === 'raggio' && (
+              <div style={{ marginTop: 12, display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }} className="animate-fadeup">
+                {RAGGI.map(r => (
+                  <button key={r} onClick={() => { setRaggio(r); setFiltroAperto(null); }} style={{
+                    padding: '6px 14px', borderRadius: 20, fontSize: 13, fontWeight: 500,
+                    border: raggio === r ? '1px solid white' : '1px solid rgba(255,255,255,0.2)',
+                    background: raggio === r ? 'white' : 'transparent',
+                    color: raggio === r ? 'var(--text)' : 'rgba(255,255,255,0.7)',
+                    cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
+                  }}>
+                    {r} km
+                  </button>
+                ))}
+              </div>
+            )}
 
-                {/* Raggio */}
-                <div style={{ marginBottom: 16 }}>
-                  <span style={{ fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '1.5px', display: 'block', marginBottom: 10 }}>Raggio</span>
-                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                    {RAGGI.map(r => (
-                      <button key={r} onClick={() => setRaggio(r)} style={{
-                        padding: '6px 14px', borderRadius: 20, fontSize: 13, fontWeight: 500,
-                        border: raggio === r ? '1px solid white' : '1px solid rgba(255,255,255,0.2)',
-                        background: raggio === r ? 'white' : 'transparent',
-                        color: raggio === r ? 'var(--text)' : 'rgba(255,255,255,0.7)',
-                        cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
-                      }}>
-                        {r} km
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Marca */}
-                <div>
-                  <span style={{ fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '1.5px', display: 'block', marginBottom: 10 }}>Marca</span>
-                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                    {MARCHE.map(m => (
-                      <button key={m} onClick={() => setMarca(m)} style={{
-                        padding: '6px 14px', borderRadius: 20, fontSize: 13, fontWeight: 500,
-                        border: marca === m ? '1px solid white' : '1px solid rgba(255,255,255,0.2)',
-                        background: marca === m ? 'white' : 'transparent',
-                        color: marca === m ? 'var(--text)' : 'rgba(255,255,255,0.7)',
-                        cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
-                      }}>
-                        {m}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+            {filtroAperto === 'marca' && (
+              <div style={{ marginTop: 12, display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }} className="animate-fadeup">
+                {MARCHE.map(m => (
+                  <button key={m} onClick={() => { setMarca(m); setFiltroAperto(null); }} style={{
+                    padding: '6px 14px', borderRadius: 20, fontSize: 13, fontWeight: 500,
+                    border: marca === m ? '1px solid white' : '1px solid rgba(255,255,255,0.2)',
+                    background: marca === m ? 'white' : 'transparent',
+                    color: marca === m ? 'var(--text)' : 'rgba(255,255,255,0.7)',
+                    cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
+                  }}>
+                    {m}
+                  </button>
+                ))}
               </div>
             )}
 
