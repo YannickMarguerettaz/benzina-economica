@@ -62,11 +62,8 @@ export default function MappaItalia({ carburante = 'benzina' }: { carburante?: C
   return (
     <div style={{ padding: '24px 32px 48px' }}>
       <div style={{ maxWidth: 900, margin: '0 auto' }}>
-        <p style={{ fontSize: 11, letterSpacing: '2.5px', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 8 }}>
-          Prezzi carburante oggi in Italia
-        </p>
         <h2 style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.5px', margin: '0 0 24px' }}>
-          Dove costa meno fare il pieno?
+          Dove costa meno in Italia?
         </h2>
 
         <div style={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
