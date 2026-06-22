@@ -477,6 +477,9 @@ export default function Home() {
       {!cercato && (
         <div style={{ borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', background: 'var(--surface)' }}>
           <div style={{ maxWidth: 900, margin: '0 auto', padding: '32px 32px 0' }}>
+            <h2 style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.5px', margin: '0 0 24px' }}>
+              Dove costa meno in Italia?
+            </h2>
             <div style={{ display: 'flex', gap: 4, background: '#f0efed', borderRadius: 10, padding: 4, width: 'fit-content' }}>
               {(['benzina', 'diesel', 'gpl', 'metano'] as const).map(c => (
                 <button key={c} onClick={() => setCarburanteMappa(c)} style={{
