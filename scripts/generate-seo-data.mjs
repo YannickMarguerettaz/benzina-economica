@@ -64,17 +64,24 @@ const province = [];
 for (const [sigla, lista] of Object.entries(perProvincia)) {
   const benzine = lista.map(d => d.prezzi.benzina).filter(Boolean);
   const diesel = lista.map(d => d.prezzi.diesel).filter(Boolean);
+  const gpl = lista.map(d => d.prezzi.gpl).filter(Boolean);
+  const metano = lista.map(d => d.prezzi.metano).filter(Boolean);
+  const avg = (arr) => arr.length ? Math.round(arr.reduce((a, b) => a + b, 0) / arr.length * 1000) / 1000 : null;
+  const min = (arr) => arr.length ? Math.round(Math.min(...arr) * 1000) / 1000 : null;
+  const max = (arr) => arr.length ? Math.round(Math.max(...arr) * 1000) / 1000 : null;
   province.push({
     sigla,
     nome: PROVINCE_NOMI[sigla] ?? sigla,
     slug: generaSlug(sigla),
     totale_distributori: lista.length,
-    media_benzina: benzine.length ? Math.round(benzine.reduce((a, b) => a + b, 0) / benzine.length * 1000) / 1000 : null,
-    media_diesel: diesel.length ? Math.round(diesel.reduce((a, b) => a + b, 0) / diesel.length * 1000) / 1000 : null,
-    min_benzina: benzine.length ? Math.round(Math.min(...benzine) * 1000) / 1000 : null,
-    min_diesel: diesel.length ? Math.round(Math.min(...diesel) * 1000) / 1000 : null,
-    max_benzina: benzine.length ? Math.round(Math.max(...benzine) * 1000) / 1000 : null,
-    max_diesel: diesel.length ? Math.round(Math.max(...diesel) * 1000) / 1000 : null,
+    media_benzina: avg(benzine),
+    media_diesel: avg(diesel),
+    media_gpl: avg(gpl),
+    media_metano: avg(metano),
+    min_benzina: min(benzine),
+    min_diesel: min(diesel),
+    max_benzina: max(benzine),
+    max_diesel: max(diesel),
   });
 }
 
