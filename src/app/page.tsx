@@ -313,7 +313,7 @@ export default function Home() {
                   color: 'white', cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
                 }}
               >
-                Raggio · {raggio} km
+                Raggio
               </button>
               <button
                 onClick={() => setFiltroAperto(filtroAperto === 'marca' ? null : 'marca')}
@@ -324,7 +324,7 @@ export default function Home() {
                   color: 'white', cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
                 }}
               >
-                Marca · {marca}
+                Marca
               </button>
             </div>
 
