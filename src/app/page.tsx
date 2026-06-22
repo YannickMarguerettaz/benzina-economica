@@ -41,7 +41,7 @@ export default function Home() {
   const [modalitaRicerca, setModalitaRicerca] = useState<'gps' | 'indirizzo'>('gps');
   const [vista, setVista] = useState<'lista' | 'mappa'>('lista');
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
-  const [filtroAperto, setFiltroAperto] = useState<'raggio' | 'marca' | null>(null);
+  const [filtroAperto, setFiltroAperto] = useState<'carburante' | 'raggio' | 'marca' | null>(null);
   const [loadingStep, setLoadingStep] = useState<'gps' | 'data' | null>(null);
   const [risparmioMedioAnnuale, setRisparmioMedioAnnuale] = useState<number>(260);
 
@@ -287,46 +287,43 @@ export default function Home() {
               </button>
             </div>
 
-            {/* Carburante */}
-            <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginBottom: 16, flexWrap: 'wrap' }}>
-              {CARBURANTI.map(c => (
-                <button key={c.value} onClick={() => setCarburante(c.value)} style={{
-                  padding: '5px 14px', borderRadius: 20, fontSize: 13, fontWeight: 500,
-                  border: carburante === c.value ? '1px solid white' : '1px solid rgba(255,255,255,0.2)',
-                  background: carburante === c.value ? 'white' : 'transparent',
-                  color: carburante === c.value ? 'var(--text)' : 'rgba(255,255,255,0.7)',
-                  cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
-                }}>
-                  {c.label}
+            {/* Pulsanti filtro */}
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
+              {([
+                { key: 'carburante', label: `Carburante · ${CARBURANTI.find(c => c.value === carburante)?.label}`, attivo: filtroAperto === 'carburante' || carburante !== 'benzina' },
+                { key: 'raggio', label: `Raggio · ${raggio} km`, attivo: filtroAperto === 'raggio' || raggio !== 10 },
+                { key: 'marca', label: `Marca · ${marca}`, attivo: filtroAperto === 'marca' || marca !== 'Tutte' },
+              ] as { key: 'carburante' | 'raggio' | 'marca'; label: string; attivo: boolean }[]).map(btn => (
+                <button
+                  key={btn.key}
+                  onClick={() => setFiltroAperto(filtroAperto === btn.key ? null : btn.key)}
+                  style={{
+                    padding: '6px 16px', borderRadius: 20, fontSize: 13, fontWeight: 500,
+                    border: btn.attivo ? '1px solid rgba(255,255,255,0.6)' : '1px solid rgba(255,255,255,0.2)',
+                    background: btn.attivo ? 'rgba(255,255,255,0.15)' : 'transparent',
+                    color: 'white', cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
+                  }}
+                >
+                  {btn.label}
                 </button>
               ))}
             </div>
 
-            {/* Pulsanti filtro */}
-            <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
-              <button
-                onClick={() => setFiltroAperto(filtroAperto === 'raggio' ? null : 'raggio')}
-                style={{
-                  padding: '6px 16px', borderRadius: 20, fontSize: 13, fontWeight: 500,
-                  border: filtroAperto === 'raggio' || raggio !== 5 ? '1px solid rgba(255,255,255,0.6)' : '1px solid rgba(255,255,255,0.2)',
-                  background: filtroAperto === 'raggio' || raggio !== 5 ? 'rgba(255,255,255,0.15)' : 'transparent',
-                  color: 'white', cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
-                }}
-              >
-                Raggio · {raggio} km
-              </button>
-              <button
-                onClick={() => setFiltroAperto(filtroAperto === 'marca' ? null : 'marca')}
-                style={{
-                  padding: '6px 16px', borderRadius: 20, fontSize: 13, fontWeight: 500,
-                  border: filtroAperto === 'marca' || marca !== 'Tutte' ? '1px solid rgba(255,255,255,0.6)' : '1px solid rgba(255,255,255,0.2)',
-                  background: filtroAperto === 'marca' || marca !== 'Tutte' ? 'rgba(255,255,255,0.15)' : 'transparent',
-                  color: 'white', cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
-                }}
-              >
-                Marca · {marca}
-              </button>
-            </div>
+            {filtroAperto === 'carburante' && (
+              <div style={{ marginTop: 12, display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }} className="animate-fadeup">
+                {CARBURANTI.map(c => (
+                  <button key={c.value} onClick={() => { setCarburante(c.value); setFiltroAperto(null); }} style={{
+                    padding: '6px 14px', borderRadius: 20, fontSize: 13, fontWeight: 500,
+                    border: carburante === c.value ? '1px solid white' : '1px solid rgba(255,255,255,0.2)',
+                    background: carburante === c.value ? 'white' : 'transparent',
+                    color: carburante === c.value ? 'var(--text)' : 'rgba(255,255,255,0.7)',
+                    cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
+                  }}>
+                    {c.label}
+                  </button>
+                ))}
+              </div>
+            )}
 
             {filtroAperto === 'raggio' && (
               <div style={{ marginTop: 12, display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }} className="animate-fadeup">
