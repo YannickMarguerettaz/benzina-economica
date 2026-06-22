@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ComposableMap, Geographies, Geography } from 'react-simple-maps';
 import { scaleLinear } from 'd3-scale';
 
@@ -24,16 +24,26 @@ interface Tooltip {
   slug: string;
 }
 
+interface TapInfo {
+  nome: string;
+  prezzo: string;
+  slug: string;
+}
+
 const GEO_URL = '/data/province-topo.json';
 
 export default function MappaItalia({ carburante = 'benzina' }: { carburante?: CarburanteMappa }) {
   const [province, setProvince] = useState<ProvinciaData[]>([]);
   const [tooltip, setTooltip] = useState<Tooltip | null>(null);
+  const [tapInfo, setTapInfo] = useState<TapInfo | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const tapTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     fetch('/data/province.json')
       .then((r) => r.json())
       .then((d) => setProvince(d.province));
+    setIsMobile('ontouchstart' in window);
   }, []);
 
   const prezzoKey = `media_${carburante}` as keyof ProvinciaData;
@@ -59,10 +69,19 @@ export default function MappaItalia({ carburante = 'benzina' }: { carburante?: C
     );
   };
 
+  const handleTap = (prov: ProvinciaData, prezzo: number) => {
+    if (tapInfo?.slug === prov.slug) {
+      window.location.href = `/${prov.slug}`;
+      return;
+    }
+    setTapInfo({ nome: prov.nome, prezzo: prezzo.toFixed(3), slug: prov.slug });
+    if (tapTimeout.current) clearTimeout(tapTimeout.current);
+    tapTimeout.current = setTimeout(() => setTapInfo(null), 4000);
+  };
+
   return (
     <div style={{ padding: '24px 32px 48px' }}>
       <div style={{ maxWidth: 900, margin: '0 auto' }}>
-
 
         <div style={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
           <ComposableMap
@@ -78,35 +97,35 @@ export default function MappaItalia({ carburante = 'benzina' }: { carburante?: C
                   const prov = getProvinciaByGeo(geo);
                   const prezzo = prov ? (prov[prezzoKey] as number | null) : null;
                   const fill = prezzo ? colorScale(prezzo) : '#e8e6e1';
+                  const isActive = tapInfo?.slug === prov?.slug;
 
                   return (
                     <Geography
                       key={geo.rsmKey}
                       geography={geo}
-                      fill={fill}
-                      stroke="#ffffff"
-                      strokeWidth={0.5}
+                      fill={isActive ? '#fff' : fill}
+                      stroke={isActive ? '#1a6b3a' : '#ffffff'}
+                      strokeWidth={isActive ? 1.5 : 0.5}
                       style={{
                         default: { outline: 'none', cursor: prov ? 'pointer' : 'default' },
                         hover: { outline: 'none', opacity: 0.8, cursor: prov ? 'pointer' : 'default' },
                         pressed: { outline: 'none' },
                       }}
                       onMouseEnter={(e) => {
-                        if (!prov || !prezzo) return;
-                        setTooltip({
-                          x: e.clientX,
-                          y: e.clientY,
-                          nome: prov.nome,
-                          prezzo: prezzo.toFixed(3),
-                          slug: prov.slug,
-                        });
+                        if (isMobile || !prov || !prezzo) return;
+                        setTooltip({ x: e.clientX, y: e.clientY, nome: prov.nome, prezzo: prezzo.toFixed(3), slug: prov.slug });
                       }}
                       onMouseMove={(e) => {
+                        if (isMobile) return;
                         setTooltip((t) => t ? { ...t, x: e.clientX, y: e.clientY } : null);
                       }}
-                      onMouseLeave={() => setTooltip(null)}
+                      onMouseLeave={() => { if (!isMobile) setTooltip(null); }}
                       onClick={() => {
-                        if (prov) window.location.href = `/${prov.slug}`;
+                        if (isMobile) {
+                          if (prov && prezzo) handleTap(prov, prezzo);
+                        } else {
+                          if (prov) window.location.href = `/${prov.slug}`;
+                        }
                       }}
                     />
                   );
@@ -115,7 +134,8 @@ export default function MappaItalia({ carburante = 'benzina' }: { carburante?: C
             </Geographies>
           </ComposableMap>
 
-          {tooltip && (
+          {/* Tooltip desktop */}
+          {!isMobile && tooltip && (
             <div style={{
               position: 'fixed',
               left: tooltip.x + 14,
@@ -136,8 +156,33 @@ export default function MappaItalia({ carburante = 'benzina' }: { carburante?: C
           )}
         </div>
 
+        {/* Banner tap mobile */}
+        {isMobile && tapInfo && (
+          <div
+            onClick={() => window.location.href = `/${tapInfo.slug}`}
+            style={{
+              marginTop: 16,
+              padding: '14px 20px',
+              background: 'var(--text)',
+              color: 'white',
+              borderRadius: 12,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              cursor: 'pointer',
+              boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
+            }}
+          >
+            <div>
+              <div style={{ fontSize: 15, fontWeight: 700 }}>{tapInfo.nome}</div>
+              <div style={{ fontSize: 13, opacity: 0.7, marginTop: 2 }}>media {carburante} · €{tapInfo.prezzo}/L</div>
+            </div>
+            <div style={{ fontSize: 13, fontWeight: 600, opacity: 0.8 }}>Vedi prezzi →</div>
+          </div>
+        )}
+
         {/* Legenda */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 20, justifyContent: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 20, justifyContent: 'center', flexWrap: 'wrap' }}>
           <span style={{ fontSize: 12, color: 'var(--muted)' }}>€{minPrezzo.toFixed(3)} più economica</span>
           <div style={{ width: 160, height: 6, borderRadius: 3, background: 'linear-gradient(to right, #1a6b3a, #f59e0b, #dc2626)' }} />
           <span style={{ fontSize: 12, color: 'var(--muted)' }}>€{maxPrezzo.toFixed(3)} più cara</span>
