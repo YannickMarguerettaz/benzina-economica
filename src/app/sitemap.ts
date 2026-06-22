@@ -26,6 +26,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'daily',
       priority: 0.8,
     },
+    ...(['benzina', 'diesel', 'gpl', 'metano'] as const).map((c) => ({
+      url: `https://trovacarburante.com/province/${c}`,
+      lastModified: oggi,
+      changeFrequency: 'daily' as const,
+      priority: 0.8,
+    })),
     ...province.map((p) => ({
       url: `https://trovacarburante.com/${p.slug}`,
       lastModified: oggi,
