@@ -88,9 +88,6 @@ export default function ProvinceList({ carburante }: { carburante: Carburante })
       {/* Hero */}
       <div style={{ background: 'var(--text)', color: '#fff', padding: '56px 24px 48px' }}>
         <div style={{ maxWidth: 900, margin: '0 auto' }}>
-          <Link href="/" style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13, textDecoration: 'none', display: 'inline-block', marginBottom: 24 }}>
-            ← Torna alla ricerca
-          </Link>
           <h1 style={{ fontSize: 36, fontWeight: 600, lineHeight: 1.2, marginBottom: 12 }}>
             Prezzi {LABEL[carburante].toLowerCase()} per provincia
           </h1>

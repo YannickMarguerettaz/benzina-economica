@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import InstallBanner from '@/components/InstallBanner';
+import Header from '@/components/Header';
 
 export const metadata: Metadata = {
   title: 'TrovaCarburante — Trova il distributore più economico vicino a te',
@@ -53,6 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <noscript dangerouslySetInnerHTML={{
           __html: `<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PLZ3G5B8" height="0" width="0" style="display:none;visibility:hidden"></iframe>`
         }} />
+        <Header />
         {children}
         <InstallBanner />
       </body>
