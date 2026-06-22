@@ -107,7 +107,7 @@ export default function GraficoStorico({ sigla }: { sigla: string }) {
             domain={['auto', 'auto']}
           />
           <Tooltip
-            formatter={(value: number, name: string) => [`€${value.toFixed(3)}/L`, name]}
+            formatter={(value, name) => [typeof value === 'number' ? `€${value.toFixed(3)}/L` : value, name]}
             contentStyle={{ fontSize: 12, border: '1px solid var(--border)', borderRadius: 8, boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}
           />
           {(['benzina', 'diesel', 'gpl', 'metano'] as Carburante[]).map(c =>
