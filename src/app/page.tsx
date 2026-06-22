@@ -31,7 +31,7 @@ async function geocodifica(indirizzo: string): Promise<{ lat: number; lng: numbe
 export default function Home() {
   const [risultati, setRisultati] = useState<DistributoreConDistanza[]>([]);
   const [carburante, setCarburante] = useState<Carburante>('benzina');
-  const [raggio, setRaggio] = useState(5);
+  const [raggio, setRaggio] = useState(10);
   const [marca, setMarca] = useState('Tutte');
   const [loading, setLoading] = useState(false);
   const [errore, setErrore] = useState<string | null>(null);
