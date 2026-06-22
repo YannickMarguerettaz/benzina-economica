@@ -16,13 +16,9 @@ export default function Header() {
           </div>
           <span style={{ fontWeight: 700, fontSize: 17, letterSpacing: '-0.4px', color: 'var(--text)' }}>TrovaCarburante</span>
         </Link>
-        {isHome ? (
+        {isHome && (
           <Link href="/province" style={{ fontSize: 14, color: 'var(--muted)', textDecoration: 'none', fontWeight: 500 }}>
-            Prezzi per provincia →
-          </Link>
-        ) : (
-          <Link href="/" style={{ fontSize: 14, color: 'var(--muted)', textDecoration: 'none', fontWeight: 500 }}>
-            Cerca carburante →
+            Prezzi per provincia
           </Link>
         )}
       </div>
