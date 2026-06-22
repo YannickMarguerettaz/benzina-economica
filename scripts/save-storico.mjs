@@ -17,6 +17,8 @@ for (const p of province) {
     med_b: p.media_benzina,
     min_d: p.min_diesel,
     med_d: p.media_diesel,
+    med_g: p.media_gpl,
+    med_m: p.media_metano,
   };
 }
 

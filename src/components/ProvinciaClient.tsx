@@ -1,9 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import Link from 'next/link';
 import DistributoreCard from '@/components/DistributoreCard';
 import { Distributore, Carburante } from '@/lib/types';
+
+const GraficoStorico = lazy(() => import('@/components/GraficoStorico'));
 
 interface Provincia {
   sigla: string;
@@ -360,6 +362,13 @@ export default function ProvinciaClient({ prov, distributori }: Props) {
           )}
         </div>
 
+      </div>
+
+      {/* Grafico storico */}
+      <div style={{ maxWidth: 900, margin: '0 auto', padding: '0 32px' }}>
+        <Suspense fallback={null}>
+          <GraficoStorico sigla={prov.sigla} />
+        </Suspense>
       </div>
 
       {/* FAQ */}
