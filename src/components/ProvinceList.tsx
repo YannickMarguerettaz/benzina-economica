@@ -15,6 +15,36 @@ interface Provincia {
   media_metano: number | null;
 }
 
+const CHIAVI_STORICO: Record<Carburante, string> = {
+  benzina: 'med_b',
+  diesel: 'med_d',
+  gpl: 'med_g',
+  metano: 'med_m',
+};
+
+function getDeltaIeri(carburante: Carburante): Record<string, number> {
+  try {
+    const path = join(process.cwd(), 'public', 'data', 'storico.json');
+    const storico: { data: string; province: Record<string, Record<string, number | null>> }[] =
+      JSON.parse(readFileSync(path, 'utf-8'));
+    if (storico.length < 2) return {};
+    const oggi = storico[storico.length - 1];
+    const ieri = storico[storico.length - 2];
+    const chiave = CHIAVI_STORICO[carburante];
+    const result: Record<string, number> = {};
+    for (const sigla of Object.keys(oggi.province)) {
+      const vo = oggi.province[sigla]?.[chiave];
+      const vi = ieri.province[sigla]?.[chiave];
+      if (typeof vo === 'number' && typeof vi === 'number') {
+        result[sigla] = Math.round((vo - vi) * 1000) / 1000;
+      }
+    }
+    return result;
+  } catch {
+    return {};
+  }
+}
+
 const NOMI_CORRETTI: Record<string, string> = {
   SU: 'Sud Sardegna',
 };
@@ -79,6 +109,7 @@ const NAV: { carburante: Carburante; label: string }[] = [
 
 export default function ProvinceList({ carburante }: { carburante: Carburante }) {
   const { regioniMap, totaleDistributori } = getProvince();
+  const delta = getDeltaIeri(carburante);
   const regioni = Object.keys(REGIONI);
   const prezzoKey = `media_${carburante}` as keyof Provincia;
 
@@ -180,6 +211,8 @@ export default function ProvinceList({ carburante }: { carburante: Carburante })
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(175px, 1fr))', gap: 10 }}>
                   {province.map((p) => {
                     const prezzo = p[prezzoKey] as number | null;
+                    const d = delta[p.sigla];
+                    const hasDelta = typeof d === 'number' && d !== 0;
                     return (
                       <Link key={p.sigla} href={`/${p.slug}`} style={{ textDecoration: 'none' }}>
                         <div className="station-card" style={{
@@ -203,6 +236,14 @@ export default function ProvinceList({ carburante }: { carburante: Carburante })
                                 {prezzo.toFixed(3)}
                               </span>
                               <span style={{ fontSize: 11, color: 'var(--muted)' }}>€/L</span>
+                              {hasDelta && (
+                                <span style={{
+                                  fontSize: 10, fontWeight: 600, marginLeft: 4,
+                                  color: d < 0 ? 'var(--green)' : '#dc2626',
+                                }}>
+                                  {d < 0 ? '▼' : '▲'}{Math.abs(d).toFixed(3)}
+                                </span>
+                              )}
                             </div>
                           ) : (
                             <div style={{ fontSize: 13, color: 'var(--muted)' }}>N/D</div>
