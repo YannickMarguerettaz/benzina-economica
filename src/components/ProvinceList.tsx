@@ -122,9 +122,27 @@ export default function ProvinceList({ carburante }: { carburante: Carburante })
           <h1 style={{ fontSize: 36, fontWeight: 600, lineHeight: 1.2, marginBottom: 12 }}>
             Prezzi {LABEL[carburante].toLowerCase()} per provincia
           </h1>
-          <p style={{ fontSize: 17, color: 'rgba(255,255,255,0.65)', maxWidth: 520, lineHeight: 1.6, marginBottom: 32 }}>
+          <p style={{ fontSize: 17, color: 'rgba(255,255,255,0.65)', maxWidth: 520, lineHeight: 1.6, marginBottom: 24 }}>
             Tutte le 107 province italiane con il prezzo medio del {LABEL[carburante].toLowerCase()} aggiornato ogni notte. Trova dove costa meno nella tua zona.
           </p>
+
+          {/* Tab carburante nell'hero */}
+          <div style={{ display: 'flex', gap: 4, background: 'rgba(255,255,255,0.08)', borderRadius: 10, padding: 4, width: 'fit-content', marginBottom: 32 }}>
+            {NAV.map(({ carburante: c, label }) => (
+              <Link key={c} href={`/province/${c}`} style={{ textDecoration: 'none' }}>
+                <div style={{
+                  padding: '7px 16px', borderRadius: 7, fontSize: 13, fontWeight: 500,
+                  cursor: 'pointer', transition: 'all 0.15s',
+                  background: carburante === c ? 'white' : 'transparent',
+                  color: carburante === c ? 'var(--text)' : 'rgba(255,255,255,0.6)',
+                  whiteSpace: 'nowrap' as const,
+                }}>
+                  {label}
+                </div>
+              </Link>
+            ))}
+          </div>
+
           <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap' }}>
             <div>
               <div style={{ fontSize: 28, fontWeight: 600, fontFamily: 'DM Mono, monospace' }}>107</div>
@@ -140,28 +158,6 @@ export default function ProvinceList({ carburante }: { carburante: Carburante })
               <div style={{ fontSize: 28, fontWeight: 600, fontFamily: 'DM Mono, monospace' }}>20</div>
               <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>regioni</div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Tab carburante */}
-      <div style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)' }}>
-        <div style={{ maxWidth: 900, margin: '0 auto', padding: '12px 24px', display: 'flex', gap: 4 }}>
-          <div style={{ display: 'flex', gap: 4, background: '#f0efed', borderRadius: 10, padding: 4 }}>
-            {NAV.map(({ carburante: c, label }) => (
-              <Link key={c} href={`/province/${c}`} style={{ textDecoration: 'none' }}>
-                <div style={{
-                  padding: '6px 14px', borderRadius: 7, fontSize: 13, fontWeight: 500,
-                  cursor: 'pointer', transition: 'all 0.15s',
-                  background: carburante === c ? 'white' : 'transparent',
-                  color: carburante === c ? 'var(--text)' : 'var(--muted)',
-                  boxShadow: carburante === c ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
-                  whiteSpace: 'nowrap' as const,
-                }}>
-                  {label}
-                </div>
-              </Link>
-            ))}
           </div>
         </div>
       </div>
