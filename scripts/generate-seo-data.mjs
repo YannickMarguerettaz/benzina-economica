@@ -80,8 +80,12 @@ for (const [sigla, lista] of Object.entries(perProvincia)) {
     media_metano: avg(metano),
     min_benzina: min(benzine),
     min_diesel: min(diesel),
+    min_gpl: min(gpl),
+    min_metano: min(metano),
     max_benzina: max(benzine),
     max_diesel: max(diesel),
+    max_gpl: max(gpl),
+    max_metano: max(metano),
   });
 }
 

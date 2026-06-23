@@ -14,10 +14,16 @@ interface Provincia {
   totale_distributori: number;
   media_benzina: number | null;
   media_diesel: number | null;
+  media_gpl: number | null;
+  media_metano: number | null;
   min_benzina: number | null;
   min_diesel: number | null;
+  min_gpl: number | null;
+  min_metano: number | null;
   max_benzina: number | null;
   max_diesel: number | null;
+  max_gpl: number | null;
+  max_metano: number | null;
 }
 
 interface Props {
@@ -109,12 +115,16 @@ export default function ProvinciaClient({ prov, distributori }: Props) {
   const [tuttiVisibili, setTuttiVisibili] = useState(false);
   const [ordine, setOrdine] = useState<'asc' | 'desc'>('asc');
 
-  const diffCentesimi = prov.min_benzina && prov.max_benzina
-    ? ((prov.max_benzina - prov.min_benzina) * 100).toFixed(1)
+  const minTab = prov[`min_${tab}` as keyof Provincia] as number | null;
+  const maxTab = prov[`max_${tab}` as keyof Provincia] as number | null;
+  const mediaTab = prov[`media_${tab}` as keyof Provincia] as number | null;
+
+  const diffCentesimi = minTab && maxTab
+    ? ((maxTab - minTab) * 100).toFixed(1)
     : null;
 
-  const risparmio = prov.min_benzina && prov.max_benzina
-    ? ((prov.max_benzina - prov.min_benzina) * 50).toFixed(1)
+  const risparmio = minTab && maxTab
+    ? ((maxTab - minTab) * 50).toFixed(1)
     : null;
 
   // 11.000 km/anno, 7L/100km = 770L/anno ÷ 50L per pieno = ~15 pieni/anno
@@ -157,9 +167,9 @@ export default function ProvinciaClient({ prov, distributori }: Props) {
           {/* Stat bar */}
           <div style={{ display: 'flex', gap: 0, flexWrap: 'wrap', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: 28 }}>
             {[
-              { label: 'più economico', value: prov.min_benzina ? `${prov.min_benzina.toFixed(3)}€` : '—', color: '#4ade80' },
-              { label: 'più caro', value: prov.max_benzina ? `${prov.max_benzina.toFixed(3)}€` : '—', color: '#f87171' },
-              { label: 'media provincia', value: prov.media_benzina ? `${prov.media_benzina.toFixed(3)}€` : '—', color: '#fff' },
+              { label: 'più economico', value: minTab ? `${minTab.toFixed(3)}€` : '—', color: '#4ade80' },
+              { label: 'più caro', value: maxTab ? `${maxTab.toFixed(3)}€` : '—', color: '#f87171' },
+              { label: 'media provincia', value: mediaTab ? `${mediaTab.toFixed(3)}€` : '—', color: '#fff' },
               { label: 'risparmio annuale', value: risparmioAnnuale ? `~${risparmioAnnuale}€` : '—', color: '#4ade80' },
             ].map((s, i) => (
               <div key={i} style={{ paddingRight: 40, marginRight: 40, borderRight: i < 3 ? '1px solid rgba(255,255,255,0.1)' : 'none', marginBottom: 8 }}>

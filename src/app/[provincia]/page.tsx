@@ -12,10 +12,16 @@ interface Provincia {
   totale_distributori: number;
   media_benzina: number | null;
   media_diesel: number | null;
+  media_gpl: number | null;
+  media_metano: number | null;
   min_benzina: number | null;
   min_diesel: number | null;
+  min_gpl: number | null;
+  min_metano: number | null;
   max_benzina: number | null;
   max_diesel: number | null;
+  max_gpl: number | null;
+  max_metano: number | null;
 }
 
 function getProvince(): Provincia[] {
