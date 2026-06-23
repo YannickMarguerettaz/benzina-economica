@@ -145,4 +145,27 @@ body {
   .page-wrapper {
     padding: 0 16px;
   }
+
+  .provincia-stat-bar {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+
+  .provincia-stat-bar > div {
+    border-right: none !important;
+    margin-right: 0 !important;
+    padding-right: 0 !important;
+    padding: 16px 12px !important;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .provincia-stat-bar > div:nth-child(odd) {
+    border-right: 1px solid rgba(255,255,255,0.1) !important;
+  }
+
+  .provincia-stat-bar > div:nth-child(3),
+  .provincia-stat-bar > div:nth-child(4) {
+    border-bottom: none;
+  }
 }

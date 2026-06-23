@@ -183,7 +183,7 @@ export default function ProvinciaClient({ prov, distributori }: Props) {
           </div>
 
           {/* Stat bar */}
-          <div style={{ display: 'flex', gap: 0, flexWrap: 'wrap', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: 28 }}>
+          <div className="provincia-stat-bar" style={{ display: 'flex', gap: 0, flexWrap: 'wrap', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: 28 }}>
             {[
               { label: 'più economico', value: minTab ? `${minTab.toFixed(3)}€` : '—', color: '#4ade80' },
               { label: 'più caro', value: maxTab ? `${maxTab.toFixed(3)}€` : '—', color: '#f87171' },
@@ -205,47 +205,6 @@ export default function ProvinciaClient({ prov, distributori }: Props) {
 
       {/* Contenuto */}
       <div style={{ maxWidth: 900, margin: '0 auto', padding: '40px 32px 80px' }}>
-
-        {/* Blocco SEO editoriale */}
-        <div style={{ marginBottom: 40, borderBottom: '1px solid var(--border)', paddingBottom: 40 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40 }} className="seo-grid">
-            <div>
-              <div style={{ fontFamily: 'DM Mono, monospace', fontSize: 11, color: 'var(--muted)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 12 }}>
-                Quanto si risparmia
-              </div>
-              <h2 style={{ fontSize: 20, fontWeight: 700, lineHeight: 1.3, marginBottom: 12 }}>
-                A {prov.nome} il {TABS.find(t => t.value === tab)?.label.toLowerCase()} non costa uguale per tutti
-              </h2>
-              <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.8, margin: 0 }}>
-                {minTab && maxTab ? (
-                  <>
-                    Oggi a {prov.nome} il distributore di {TABS.find(t => t.value === tab)?.label.toLowerCase()} più economico pratica <strong>{minTab.toFixed(3)}€/L</strong>,
-                    quello più caro <strong>{maxTab.toFixed(3)}€/L</strong> —
-                    sono <strong>{diffCentesimi} centesimi di differenza al litro</strong> tra due pompe nella stessa provincia.
-                    Su un pieno da 50 litri sono <strong>~{risparmio ? Math.round(parseFloat(risparmio)) : '—'}€</strong>.
-                    In un anno rappresentano un risparmio di{' '}
-                    <strong style={{ fontSize: 16, color: 'var(--green)' }}>~{risparmioAnnuale}€</strong>.
-                  </>
-                ) : (
-                  `Confronta i prezzi dei distributori nella provincia di ${prov.nome} e scegli quello più conveniente.`
-                )}
-              </p>
-            </div>
-            <div>
-              <div style={{ fontFamily: 'DM Mono, monospace', fontSize: 11, color: 'var(--muted)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 12 }}>
-                I dati
-              </div>
-              <h2 style={{ fontSize: 20, fontWeight: 700, lineHeight: 1.3, marginBottom: 12 }}>
-                Prezzi aggiornati ogni notte
-              </h2>
-              <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.8, margin: 0 }}>
-                I prezzi di tutti i {prov.totale_distributori} distributori della provincia di {prov.nome}{' '}
-                vengono scaricati ogni notte dal Ministero delle Imprese e del Made in Italy (MISE).
-                I gestori sono obbligati per legge a comunicare i prezzi praticati.
-              </p>
-            </div>
-          </div>
-        </div>
 
         {/* CTA cerca vicino */}
         <div style={{
@@ -373,6 +332,49 @@ export default function ProvinciaClient({ prov, distributori }: Props) {
         <Suspense fallback={null}>
           <GraficoStorico sigla={prov.sigla} />
         </Suspense>
+      </div>
+
+      {/* Blocco SEO editoriale */}
+      <div style={{ maxWidth: 900, margin: '0 auto', padding: '40px 32px 0' }}>
+        <div style={{ borderTop: '1px solid var(--border)', paddingTop: 40 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40 }} className="seo-grid">
+            <div>
+              <div style={{ fontFamily: 'DM Mono, monospace', fontSize: 11, color: 'var(--muted)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 12 }}>
+                Quanto si risparmia
+              </div>
+              <h2 style={{ fontSize: 20, fontWeight: 700, lineHeight: 1.3, marginBottom: 12 }}>
+                A {prov.nome} il {TABS.find(t => t.value === tab)?.label.toLowerCase()} non costa uguale per tutti
+              </h2>
+              <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.8, margin: 0 }}>
+                {minTab && maxTab ? (
+                  <>
+                    Oggi a {prov.nome} il distributore di {TABS.find(t => t.value === tab)?.label.toLowerCase()} più economico pratica <strong>{minTab.toFixed(3)}€/L</strong>,
+                    quello più caro <strong>{maxTab.toFixed(3)}€/L</strong> —
+                    sono <strong>{diffCentesimi} centesimi di differenza al litro</strong> tra due pompe nella stessa provincia.
+                    Su un pieno da 50 litri sono <strong>~{risparmio ? Math.round(parseFloat(risparmio)) : '—'}€</strong>.
+                    In un anno rappresentano un risparmio di{' '}
+                    <strong style={{ fontSize: 16, color: 'var(--green)' }}>~{risparmioAnnuale}€</strong>.
+                  </>
+                ) : (
+                  `Confronta i prezzi dei distributori nella provincia di ${prov.nome} e scegli quello più conveniente.`
+                )}
+              </p>
+            </div>
+            <div>
+              <div style={{ fontFamily: 'DM Mono, monospace', fontSize: 11, color: 'var(--muted)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 12 }}>
+                I dati
+              </div>
+              <h2 style={{ fontSize: 20, fontWeight: 700, lineHeight: 1.3, marginBottom: 12 }}>
+                Prezzi aggiornati ogni notte
+              </h2>
+              <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.8, margin: 0 }}>
+                I prezzi di tutti i {prov.totale_distributori} distributori della provincia di {prov.nome}{' '}
+                vengono scaricati ogni notte dal Ministero delle Imprese e del Made in Italy (MISE).
+                I gestori sono obbligati per legge a comunicare i prezzi praticati.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* FAQ */}
