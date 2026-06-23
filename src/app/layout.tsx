@@ -4,13 +4,13 @@ import InstallBanner from '@/components/InstallBanner';
 import Header from '@/components/Header';
 
 export const metadata: Metadata = {
-  title: 'TrovaCarburante — Trova il distributore più economico vicino a te',
+  title: 'TrovaCarburante: il distributore più economico vicino a te',
   description: 'Prezzi benzina e diesel aggiornati ogni giorno dal MISE. Trova il distributore più economico vicino a te in Italia.',
   verification: {
     google: 'X_uIYJIrw1j4R27GcUt-_X_HBwDs1l2wsP7FARVdEeI',
   },
   openGraph: {
-    title: 'TrovaCarburante — Trova il distributore più economico vicino a te',
+    title: 'TrovaCarburante: il distributore più economico vicino a te',
     description: 'Prezzi benzina e diesel aggiornati ogni giorno dal MISE. Trova il distributore più economico vicino a te in Italia.',
     url: 'https://trovacarburante.com',
     siteName: 'TrovaCarburante',
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary',
-    title: 'TrovaCarburante — Trova il distributore più economico vicino a te',
+    title: 'TrovaCarburante: il distributore più economico vicino a te',
     description: 'Prezzi benzina e diesel aggiornati ogni giorno dal MISE. Trova il distributore più economico vicino a te in Italia.',
     images: ['https://trovacarburante.com/icon-512.png'],
   },
