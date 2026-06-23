@@ -158,11 +158,29 @@ export default function ProvinciaClient({ prov, distributori }: Props) {
           </div>
 
           <h1 style={{ fontSize: 'clamp(26px, 4vw, 40px)', fontWeight: 700, lineHeight: 1.15, letterSpacing: '-1px', margin: '0 0 12px' }}>
-            Prezzi benzina a {prov.nome}
+            Prezzi {TABS.find(t => t.value === tab)?.label.toLowerCase()} a {prov.nome}
           </h1>
-          <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.55)', marginBottom: 36, lineHeight: 1.6 }}>
+          <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.55)', marginBottom: 24, lineHeight: 1.6 }}>
             {prov.totale_distributori} distributori monitorati · dati aggiornati ogni notte dal MISE
           </p>
+
+          {/* Tab carburante nell'hero */}
+          <div style={{ display: 'flex', gap: 4, background: 'rgba(255,255,255,0.08)', borderRadius: 10, padding: 4, width: 'fit-content', marginBottom: 32 }}>
+            {TABS.map((t) => (
+              <button
+                key={t.value}
+                onClick={() => { setTab(t.value); setTuttiVisibili(false); setOrdine('asc'); }}
+                style={{
+                  padding: '7px 16px', borderRadius: 7, fontSize: 13, fontWeight: 500,
+                  border: 'none', cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
+                  background: tab === t.value ? 'white' : 'transparent',
+                  color: tab === t.value ? 'var(--text)' : 'rgba(255,255,255,0.6)',
+                }}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
 
           {/* Stat bar */}
           <div style={{ display: 'flex', gap: 0, flexWrap: 'wrap', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: 28 }}>
@@ -264,32 +282,8 @@ export default function ProvinciaClient({ prov, distributori }: Props) {
           </Link>
         </div>
 
-        {/* Tabs carburante + ordinamento */}
-        <div style={{ marginBottom: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-          <div style={{ display: 'flex', gap: 2, background: '#f0efed', borderRadius: 10, padding: 4, width: 'fit-content' }}>
-            {TABS.map((t) => (
-              <button
-                key={t.value}
-                onClick={() => { setTab(t.value); setTuttiVisibili(false); setOrdine('asc'); }}
-                style={{
-                  padding: '8px 18px',
-                  borderRadius: 7,
-                  fontSize: 14,
-                  fontWeight: 500,
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontFamily: 'inherit',
-                  background: tab === t.value ? 'var(--surface)' : 'transparent',
-                  color: tab === t.value ? 'var(--text)' : 'var(--muted)',
-                  boxShadow: tab === t.value ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
-                  transition: 'all 0.15s',
-                }}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
-
+        {/* Ordinamento */}
+        <div style={{ marginBottom: 20, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', flexWrap: 'wrap', gap: 12 }}>
           <div style={{ display: 'flex', gap: 2, background: '#f0efed', borderRadius: 10, padding: 4 }}>
             {([['asc', '↑ Meno caro'], ['desc', '↓ Più caro']] as const).map(([val, label]) => (
               <button
