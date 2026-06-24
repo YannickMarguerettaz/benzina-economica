@@ -6,10 +6,18 @@ interface Provincia {
   slug: string;
 }
 
+interface Citta {
+  slug: string;
+}
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const province: Provincia[] = JSON.parse(
     readFileSync(join(process.cwd(), 'public', 'data', 'province.json'), 'utf-8')
   ).province;
+
+  const citta: Citta[] = JSON.parse(
+    readFileSync(join(process.cwd(), 'public', 'data', 'citta.json'), 'utf-8')
+  ).citta;
 
   const oggi = new Date().toISOString().slice(0, 10);
 
@@ -37,6 +45,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: oggi,
       changeFrequency: 'daily' as const,
       priority: 0.7,
+    })),
+    ...citta.map((c) => ({
+      url: `https://trovacarburante.com/citta/${c.slug}`,
+      lastModified: oggi,
+      changeFrequency: 'daily' as const,
+      priority: 0.9,
     })),
   ];
 }
