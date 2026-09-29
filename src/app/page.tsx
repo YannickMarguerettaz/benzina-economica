@@ -7,7 +7,6 @@ import { aggiungiDistanza, sortPerPrezzo } from '@/lib/geo';
 import { DistributoreConDistanza, Carburante } from '@/lib/types';
 
 const MappaDistributori = lazy(() => import('@/components/MappaDistributori'));
-const MappaItalia = lazy(() => import('@/components/MappaItalia'));
 
 const CARBURANTI: { value: Carburante; label: string }[] = [
   { value: 'benzina', label: 'Benzina' },
@@ -42,7 +41,6 @@ export default function Home() {
   const [vista, setVista] = useState<'lista' | 'mappa'>('lista');
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [filtroAperto, setFiltroAperto] = useState<'carburante' | 'raggio' | 'marca' | null>(null);
-  const [carburanteMappa, setCarburanteMappa] = useState<'benzina' | 'diesel' | 'gpl' | 'metano'>('benzina');
   const [loadingStep, setLoadingStep] = useState<'gps' | 'data' | null>(null);
   const [risparmioMedioAnnuale, setRisparmioMedioAnnuale] = useState<number>(260);
 
@@ -457,34 +455,6 @@ export default function Home() {
               )}
             </>
           )}
-        </div>
-      )}
-
-      {/* Mappa province */}
-      {!cercato && (
-        <div style={{ borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', background: 'var(--surface)' }}>
-          <div style={{ maxWidth: 900, margin: '0 auto', padding: '32px 32px 0' }}>
-            <h2 style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.5px', margin: '0 0 24px' }}>
-              Dove costa meno in Italia?
-            </h2>
-            <div style={{ display: 'flex', gap: 4, background: '#f0efed', borderRadius: 10, padding: 4, width: 'fit-content' }}>
-              {(['benzina', 'diesel', 'gpl', 'metano'] as const).map(c => (
-                <button key={c} onClick={() => setCarburanteMappa(c)} style={{
-                  padding: '6px 14px', borderRadius: 7, fontSize: 13, fontWeight: 500,
-                  border: 'none', cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
-                  background: carburanteMappa === c ? 'white' : 'transparent',
-                  color: carburanteMappa === c ? 'var(--text)' : 'var(--muted)',
-                  boxShadow: carburanteMappa === c ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
-                  textTransform: 'capitalize',
-                }}>
-                  {c}
-                </button>
-              ))}
-            </div>
-          </div>
-          <Suspense fallback={<div style={{ height: 400 }} />}>
-            <MappaItalia carburante={carburanteMappa} />
-          </Suspense>
         </div>
       )}
 
