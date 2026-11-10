@@ -5,8 +5,8 @@ import iconv from 'iconv-lite';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const URL_ANAGRAFICA = 'https://www.mise.gov.it/images/exportCSV/anagrafica_impianti_attivi.csv';
-const URL_PREZZI = 'https://www.mise.gov.it/images/exportCSV/prezzo_alle_8.csv';
+const URL_ANAGRAFICA = 'https://www.mimit.gov.it/images/exportCSV/anagrafica_impianti_attivi.csv';
+const URL_PREZZI = 'https://www.mimit.gov.it/images/exportCSV/prezzo_alle_8.csv';
 const OUTPUT_PATH = join(__dirname, '..', 'public', 'data', 'distributori.json');
 
 const CARBURANTI_MAP = {
