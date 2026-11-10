@@ -1,12 +1,11 @@
 'use client';
 
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect } from 'react';
 import DistributoreCard from '@/components/DistributoreCard';
 import { fetchDistributori } from '@/lib/data';
 import { aggiungiDistanza, sortPerPrezzo } from '@/lib/geo';
 import { DistributoreConDistanza, Carburante } from '@/lib/types';
 
-const MappaDistributori = lazy(() => import('@/components/MappaDistributori'));
 
 const CARBURANTI: { value: Carburante; label: string }[] = [
   { value: 'benzina', label: 'Benzina' },
@@ -38,7 +37,6 @@ export default function Home() {
   const [aggiornato, setAggiornato] = useState<string | null>(null);
   const [indirizzo, setIndirizzo] = useState('');
   const [modalitaRicerca, setModalitaRicerca] = useState<'gps' | 'indirizzo'>('gps');
-  const [vista, setVista] = useState<'lista' | 'mappa'>('lista');
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [filtroAperto, setFiltroAperto] = useState<'carburante' | 'raggio' | 'marca' | null>(null);
   const [loadingStep, setLoadingStep] = useState<'gps' | 'data' | null>(null);
@@ -421,13 +419,6 @@ export default function Home() {
                 <span style={{ fontSize: 12, color: 'var(--muted)', fontWeight: 500, letterSpacing: '1px', textTransform: 'uppercase' }}>
                   {risultati.length} risultati · {carburante} · {raggio} km
                 </span>
-                <div style={{ display: 'flex', gap: 2, background: '#f0efed', borderRadius: 7, padding: 2 }}>
-                  {(['lista', 'mappa'] as const).map((v) => (
-                    <button key={v} onClick={() => setVista(v)} style={{ padding: '5px 12px', borderRadius: 5, fontSize: 12, fontWeight: 500, border: 'none', cursor: 'pointer', background: vista === v ? 'white' : 'transparent', color: vista === v ? 'var(--text)' : 'var(--muted)', boxShadow: vista === v ? '0 1px 4px rgba(0,0,0,0.08)' : 'none', fontFamily: 'inherit', transition: 'all 0.15s' }}>
-                      {v === 'lista' ? '≡ Lista' : '◎ Mappa'}
-                    </button>
-                  ))}
-                </div>
               </div>
 
               {aggiornato && (
@@ -436,23 +427,11 @@ export default function Home() {
                 </div>
               )}
 
-              {vista === 'lista' && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  {risultati.map((d, i) => (
-                    <DistributoreCard key={d.id} distributore={d} carburante={carburante} rank={i} />
-                  ))}
-                </div>
-              )}
-
-              {vista === 'mappa' && userCoords && (
-                <Suspense fallback={
-                  <div style={{ height: 420, background: '#f0efed', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, color: 'var(--muted)' }}>
-                    Caricamento mappa...
-                  </div>
-                }>
-                  <MappaDistributori distributori={risultati} carburante={carburante} userLat={userCoords.lat} userLng={userCoords.lng} />
-                </Suspense>
-              )}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {risultati.map((d, i) => (
+                  <DistributoreCard key={d.id} distributore={d} carburante={carburante} rank={i} />
+                ))}
+              </div>
             </>
           )}
         </div>
